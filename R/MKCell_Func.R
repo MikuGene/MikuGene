@@ -1097,15 +1097,15 @@ MK_BuildVirusRef <- function(version = "2020.3", OutVs = "default", verbose = T)
       message("Downloading genes.fasta ...", MK_time())
     }
     MK_Download(paste0("http://www.virusite.org/archive/", version, "/genes.fasta.zip"), "MikuGene_virus.fasta.zip")
-    unzip("MikuGene_virus.fasta.zip")
   }
   if(!any(list.files() %in% "MikuGenome_virus.fasta.zip")){
     if(verbose){
       message("Downloading genomes.fasta ...", MK_time())
     }
     MK_Download(paste0("http://www.virusite.org/archive/", version, "/genomes.fasta.zip"), "MikuGenome_virus.fasta.zip")
-    unzip("MikuGenome_virus.fasta.zip")
   }
+  unzip("MikuGene_virus.fasta.zip")
+  unzip("MikuGenome_virus.fasta.zip")
 
   if(!any(installed.packages() %in% "Biostrings")){
     if(!any(installed.packages() %in% "BiocManager")){
@@ -1356,4 +1356,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-14 11:54.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-14 14:35.")
