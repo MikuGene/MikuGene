@@ -879,7 +879,7 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
     saveRDS(RE,paste0("backup/", name, MK_time(), "_WGtom_backup.rds"))
 
     ## Plot TOM ##
-    plotTOM <- as.matrix(TOM) ^ 7
+    plotTOM <- -(1 - as.matrix(TOM)) ^ 7
     diag(plotTOM) = NA
     sizeGrWindow(9,9)
     tiff(paste(name,"TOM.tiff"), width = 800, height = 850, pointsize = 30, compression = "lzw")
@@ -1356,4 +1356,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-14 14:35.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-14 22:08.")
