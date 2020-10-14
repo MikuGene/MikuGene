@@ -846,7 +846,7 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
 
   ## Filt virable genes ##
   if(nGene < nrow(x)){
-    x <- t(x[order(apply(x,1,mad),decreasing = T)[1:nGene],])
+    x <- t(x[order(apply(x, 1, mad), decreasing = T)[1:nGene],])
   }else{
     x <- t(x)
   }
@@ -863,33 +863,33 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
   if(is.na(okpower)){stop("No okpower !")}
 
   ## Make net ##
-  net <- blockwiseModules(x,power = okpower,numericLabels = T,saveTOMs = T,saveTOMFileBase = paste(name,"WGTOM"),maxBlockSize = 12000)
+  net <- blockwiseModules(x, power = okpower, numericLabels = T, saveTOMs = T, saveTOMFileBase = paste(name, "WGTOM"), maxBlockSize = 12000)
   moduleColors <- labels2colors(net$colors)
   geneTree <- net$dendrograms[[1]]
   MEs <- orderMEs(moduleEigengenes(x, moduleColors)$eigengenes)
   rm(net)
-  load(grep(paste(name,"WGTOM"),list.files(),value = T))
+  load(grep(paste(name, "WGTOM"), list.files(), value = T))
   gc()
 
   ## Return ##
-  RE <- list(x,MEs,moduleColors,okpower,TOM)
+  RE <- list(x, MEs, moduleColors, okpower, TOM)
 
   if(Save){
     dir.create("backup")
-    saveRDS(RE,paste0("backup/",name,MK_time(),"_WGtom_backup.rds"))
+    saveRDS(RE,paste0("backup/", name, MK_time(), "_WGtom_backup.rds"))
 
     ## Plot TOM ##
-    plotTOM <- (1 - as.matrix(TOM)) ^ 7
+    plotTOM <- as.matrix(TOM) ^ 7
     diag(plotTOM) = NA
     sizeGrWindow(9,9)
-    tiff(paste(name,"TOM.tiff"),width = 800,height = 850,pointsize = 30,compression = "lzw")
+    tiff(paste(name,"TOM.tiff"), width = 800, height = 850, pointsize = 30, compression = "lzw")
     TOMplot(plotTOM, geneTree, moduleColors, main = "Network heatmap of all modules")
     dev.off()
     rm(plotTOM)
     gc()
   }
 
-  rm(MEs,moduleColors,okpower,geneTree)
+  rm(MEs, moduleColors, okpower, geneTree)
   return(RE)
 }
 #
@@ -1356,4 +1356,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-12 21:58.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-14 11:54.")
