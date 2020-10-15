@@ -19,7 +19,7 @@ options(stringsAsFactors = F)
 if(!any(installed.packages() %in% "Matrix")){
   install.packages("Matrix")
 }
-library(Matrix)
+suppressMessages(library(Matrix))
 
 ## MK_Tree 8a03a29901b31176e32928321b1349e6 ##
 #
@@ -515,7 +515,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200,Inf), nVar = 2.5,
   if(!any(installed.packages() %in% "Seurat")){
     install.packages("Seurat")
   }
-  library(Seurat)
+  suppressMessages(library(Seurat))
 
   if(is.null(name)){name = "temp"}
 
@@ -557,7 +557,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200,Inf), nVar = 2.5,
       }
       devtools::install_github("immunogenomics/harmony")
     }
-    library(harmony)
+    suppressMessages(library(harmony))
     AData <- ifelse(SCT, "SCT", "RNA")
     x <- RunHarmony(x, "orig.ident", max.iter.harmony = 20, max.iter.cluster = 50, assay.use = AData, verbose = Plot, plot_convergence = Plot)
   }
@@ -633,9 +633,9 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
     install.packages("ggplot2")
   }
   
-  library(clusterProfiler)
-  library(ReactomePA)
-  library(ggplot2)
+  suppressMessages(library(clusterProfiler))
+  suppressMessages(library(ReactomePA))
+  suppressMessages(library(ggplot2))
 
   ## set enrich ##
   path <- getwd()
@@ -663,7 +663,7 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
     if(!any(installed.packages() %in% "stringr")){
       install.packages("stringr")
     }
-    library(stringr)
+    suppressMessages(library(stringr))
     GoPlot <- ggplot(GoRE,
                      aes(GoRE$Count/length(as.character(GeneID[,2])), factor(GoRE$Description, levels = GoRE$Description)))+
       geom_point(aes(size = GoRE$Count, color = -1*log10(GoRE$qvalue), shape = GoRE$ONTOLOGY))+
@@ -695,7 +695,7 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
         }
         BiocManager::install("pathview")
       }
-      library(pathview)
+      suppressMessages(library(pathview))
       tryCatch(pathview(gene.data = as.character(GeneID[,2]), pathway.id = KeRE$ID, species = "hsa"))
       rm(bods, gene.idtype.bods, gene.idtype.list, cpd.simtypes, korg)
     }
@@ -773,7 +773,7 @@ MK_DEGs <- function(x, y, filt = T, log2FC = 2, padj = 0.01, pval = 0.01, save =
     }
     BiocManager::install("limma")
   }
-  library(limma)
+  suppressMessages(library(limma))
   Data = cbind(x,y)
   Group = data.frame(row.names = colnames(Data), Group1 = c(rep(1, ncol(x)), rep(0, ncol(y))), Group2 = c(rep(0, ncol(x)), rep(1, ncol(y))))
   Sig = makeContrasts("Group1-Group2", levels = Group)
@@ -841,7 +841,7 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
   if(!any(installed.packages() %in% "WGCNA")){
     install.packages("WGCNA")
   }
-  library(WGCNA)
+  suppressMessages(library(WGCNA))
   if(nGene > 11000){stop("Sorry Memory Size Crush when nGene over 11000.")}
 
   ## Filt virable genes ##
@@ -897,7 +897,7 @@ MK_WG_CliIn <- function(Clin,WG_Tom,name = "temp",color = "ALL",classname = "ALL
   if(!any(installed.packages() %in% "WGCNA")){
     install.packages("WGCNA")
   }
-  library(WGCNA)
+  suppressMessages(library(WGCNA))
   if(any(color == "ALL")){color = substring(names(WG_Tom[[2]]), 3)}
   if(any(classname == "ALL")){classname = colnames(Clin)}
 
@@ -1197,7 +1197,7 @@ MK_VirMap <- function(path_r1, path_r2, name = "temp", maxMiss = 3, GTF = T){
     }
     BiocManager::install("Rsubread")
   }
-  library(Rsubread)
+  suppressMessages(library(Rsubread))
 
   # Ref check #
   if(!any(grepl("MikuVirusref", list.files()))){
@@ -1356,4 +1356,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-14 22:08.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-15 11:33.")
