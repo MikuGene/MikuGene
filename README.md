@@ -19,8 +19,8 @@ Email 2: 2743623823@qq.com <br>
 <br>
 <i>@.@ How to use MikuGene R package:</i><br>
 <br>
-devtools::install_github("MikuGene/MikuGene")
-<br>
+<b><i>devtools::install_github("MikuGene/MikuGene")</i></b>
+<br><hr>
 
 <h2>Functions:</h2>
 <b><i>1. Single-cell RNA-seq data analysis:</i></b><br>
