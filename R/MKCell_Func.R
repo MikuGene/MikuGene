@@ -1189,8 +1189,11 @@ MK_BuildVirusRef <- function(version = "2020.3", OutVs = "default", verbose = T)
   message("MK_virusref build done .", MK_time())
 }
 ##
-MK_VirMap <- function(path_r1, path_r2, name = "temp", maxMiss = 3, GTF = T){
+MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T){
   options(scipen = 200)
+  if(is.null(name)){
+  name = "temp"
+  }
   if(!any(installed.packages() %in% "Rsubread")){
     if(!any(installed.packages() %in% "BiocManager")){
       install.packages("BiocManager")
@@ -1200,7 +1203,7 @@ MK_VirMap <- function(path_r1, path_r2, name = "temp", maxMiss = 3, GTF = T){
   suppressMessages(library(Rsubread))
 
   # Ref check #
-  if(!any(grepl("MikuVirusref", list.files()))){
+  if(!any(grepl("MikuVirusref", list.files()) & !grepl("MikuVirusref.log", list.files()))){
 
     # build ref-index #
     buildindex("MikuVirusref", "MikuGenome_virus.fasta")
@@ -1356,4 +1359,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-15 11:33.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-16 8:37.")
