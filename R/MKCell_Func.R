@@ -242,7 +242,7 @@ MK_reads = function(path, IDin = NULL, verbose = T){
   }else{
     for (i in 2:length(MKfiles)) {
       MK_comb = MK_cbind_s(MK_comb, MKfiles[[i]])
-      message("Cbinding ", i, MK_time())
+      message(" Cbinding ", i, MK_time())
     }
     rm(MKfiles)
     return(MK_comb)
@@ -1383,4 +1383,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 19:42.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 20:13.")
