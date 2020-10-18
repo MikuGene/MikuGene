@@ -3,4 +3,5 @@ export("MK_BuildVirusRef", "MK_VirMap",
        "MK_Tcga_CanerFilt", "MK_DEGs",
        "MK_Enrich", "MK_read10X", "MK_reads",
        "MK_scRNA", "MK_toMMs", "MK_Tree",
+       "MK_cbind_s", "MK_cbind_i",
        "MK_Exct", "MK_Download", "MK_rem0")
