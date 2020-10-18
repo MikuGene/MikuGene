@@ -333,6 +333,12 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   # Change sign #
   if(verbose){print(grep("\\.", rownames(x), value = T)[1:6])}
   rownames(x) <- gsub("\\.", "-", rownames(x))
+  
+  # Same gene #
+  if(sum(rownames(x) %in% c("IGJ", "JCHAIN")) > 1){
+    x["JCHAIN",] = x["IGJ",] + x["JCHAIN",]
+    x["IGJ",] = 0
+  }
 
   # Rm MT #
   if(Mito_rm){
@@ -1359,4 +1365,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-16 8:37.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 10:27.")
