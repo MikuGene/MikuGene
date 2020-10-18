@@ -336,8 +336,10 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   
   # Same gene #
   if(sum(rownames(x) %in% c("IGJ", "JCHAIN")) > 1){
-    x["JCHAIN",] = x["IGJ",] + x["JCHAIN",]
-    x["IGJ",] = 0
+    a = which(rownames(x) %in% c("IGJ", "JCHAIN"))
+    JCHAIN = apply(x[a,], 2, sum)
+    x = rbind(x[-a,], JCHAIN)
+    rm(a, JCHAIN)
   }
 
   # Rm MT #
@@ -1365,4 +1367,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 10:27.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 10:50.")
