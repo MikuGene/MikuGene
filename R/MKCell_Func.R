@@ -213,35 +213,36 @@ MK_Lm <- function(CoDsig,CoBulk,CoVari,Libr){
 
 ## MK_read 8a03a29901b31176e32928321b1349e6 ##
 MK_read <- function(path){
-  MTX <- readMM(paste0(path, "_mt.mtx"))
-  MTX_cell <- read.csv(paste0(path, "_cell.csv"), header = T, row.names = 1)$x
-  MTX_gene <- read.csv(paste0(path, "_gene.csv"), header = T, row.names = 1)$x
-  MTX@Dimnames <- list(MTX_gene, MTX_cell)
+  MTX = readMM(paste0(path, "_mt.mtx"))
+  MTX_cell = read.csv(paste0(path, "_cell.csv"), header = T, row.names = 1)$x
+  MTX_gene = read.csv(paste0(path, "_gene.csv"), header = T, row.names = 1)$x
+  MTX@Dimnames = list(MTX_gene, MTX_cell)
   rm(MTX_cell, MTX_gene)
   gc()
   return(MTX)}
 #
-MK_reads <- function(path, IDin = NULL, verbose = T){
+MK_reads = function(path, IDin = NULL, verbose = T){
   if(is.null(IDin)){
-    IDin <- unique(gsub("_.*", "", gsub(".* ", "", list.files(path))))
+    IDin = unique(gsub("_.*", "", gsub(".* ", "", list.files(path))))
   }
   MKfiles <- list()
   for (i in 1:max(as.numeric(IDin))) {
     if(verbose){message(" Read MM ", i, MK_time())}
-    MKfile <- MK_read(paste0(path, "/", path, " ", i))
-    MKfiles[[i]] <- MKfile
+    MKfile = MK_read(paste0(path, "/", path, " ", i))
+    MKfiles[[i]] = MKfile
     rm(MKfile)
   }
   rm(IDin)
 
   ## return ##
-  MK_comb <- MKfiles[[1]]
+  MK_comb = MKfiles[[1]]
   if(i == 1){
     rm(MKfiles)
     return(MK_comb)
   }else{
     for (i in 2:length(MKfiles)) {
-      MK_comb <- MK_cbind_s(MK_comb, MKfiles[[i]])
+      MK_comb = MK_cbind_s(MK_comb, MKfiles[[i]])
+      message("Cbinding ", i, MK_time())
     }
     rm(MKfiles)
     return(MK_comb)
@@ -1382,4 +1383,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 19:02.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 19:42.")
