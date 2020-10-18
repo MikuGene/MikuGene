@@ -332,7 +332,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
 
   # Change sign #
   if(verbose){print(grep("\\.", rownames(x), value = T)[1:6])}
-  rownames(x) <- gsub("\\.", "-", rownames(x))
+  rownames(x) = gsub("\\.", "-", rownames(x))
   
   # Same gene #
   if(sum(rownames(x) %in% c("IGJ", "JCHAIN")) > 1){
@@ -344,9 +344,24 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
 
   # Rm MT #
   if(Mito_rm){
-    if(verbose){print(grep("^MT-", rownames(x), value = T)[1:6])}
-    x <- x[!grepl("^MT-", rownames(x)),]
+  
+  # MT-, MTATP, MTRNR, MTND, MTCO, MTCYB #
+  if(verbose){
+    print(grep("^MT-", rownames(x), value = T)[1:6])
+    print(grep("^MTATP", rownames(x), value = T)[1:6])
+    print(grep("^MTRNR", rownames(x), value = T)[1:6])
+    print(grep("^MTND", rownames(x), value = T)[1:6])
+    print(grep("^MTCO", rownames(x), value = T)[1:6])
+    print(grep("^MTCYB", rownames(x), value = T)[1:6])
+  }        
+  x = x[!grepl("^MT-", rownames(x)),]
+  x = x[!grepl("^MTATP", rownames(x)),]
+  x = x[!grepl("^MTRNR", rownames(x)),]
+  x = x[!grepl("^MTND", rownames(x)),]
+  x = x[!grepl("^MTCO", rownames(x)),]
+  x = x[!grepl("^MTCYB", rownames(x)),]
   }
+  
 
   # Rm AC #
   if(AC_rm){
@@ -358,12 +373,12 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
       print(grep("^CT[A-Z]-", rownames(x), value = T)[1:6])
       print(rownames(x)[grepl("^XX-", rownames(x)) | grepl("^XX[a-z]", rownames(x))][1:6])
     }
-    x <- x[!grepl("^A[A-Z][0-9][0-9]", rownames(x)),]
-    x <- x[!grepl("^LINC[0-9]", rownames(x)),]
-    x <- x[!grepl("^LOC[0-9]", rownames(x)),]
-    x <- x[!grepl("^CT[A-Z]-", rownames(x)),]
-    x <- x[!(grepl("^Y-RNA", rownames(x)) | grepl("^Y_RNA", rownames(x))),]
-    x <- x[!(grepl("^XX-", rownames(x)) | grepl("^XX[a-z]", rownames(x))),]
+    x = x[!grepl("^A[A-Z][0-9][0-9]", rownames(x)),]
+    x = x[!grepl("^LINC[0-9]", rownames(x)),]
+    x = x[!grepl("^LOC[0-9]", rownames(x)),]
+    x = x[!grepl("^CT[A-Z]-", rownames(x)),]
+    x = x[!(grepl("^Y-RNA", rownames(x)) | grepl("^Y_RNA", rownames(x))),]
+    x = x[!(grepl("^XX-", rownames(x)) | grepl("^XX[a-z]", rownames(x))),]
   }
 
   # Rm RP #
@@ -374,20 +389,20 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
       print(grep("^AP[0-9][0-9][0-9]", rownames(x), value = T)[1:6])
       print(grep("^ENSG[0-9]", rownames(x), value = T)[1:6])
     }
-    x <- x[!(grepl("^RP", rownames(x)) & grepl("-", rownames(x))),]
-    x <- x[!grepl("orf[0-9]", rownames(x)),]
-    x <- x[!grepl("^AP[0-9][0-9][0-9]", rownames(x)),]
-    x <- x[!grepl("^ENSG[0-9]", rownames(x)),]
+    x = x[!(grepl("^RP", rownames(x)) & grepl("-", rownames(x))),]
+    x = x[!grepl("orf[0-9]", rownames(x)),]
+    x = x[!grepl("^AP[0-9][0-9][0-9]", rownames(x)),]
+    x = x[!grepl("^ENSG[0-9]", rownames(x)),]
   }
 
   # Rm RPL and RPS #
   if(RPLS_rm){
     if(verbose){print(rownames(x)[grepl("^RPL", rownames(x)) | grepl("^RPS", rownames(x))][1:6])}
-    x <- x[!(grepl("^RPL", rownames(x)) | grepl("^RPS", rownames(x))),]
+    x = x[!(grepl("^RPL", rownames(x)) | grepl("^RPS", rownames(x))),]
   }
 
   # Rm 0 #
-  x <- x[Matrix::rowSums(x) != 0,]
+  x = x[Matrix::rowSums(x) != 0,]
 
   # HK batch remove #
   if(HK_bm){
@@ -421,12 +436,12 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
     gc()}
 
   # Save by dgTMatrix #
-  col <- colnames(x)
-  row <- rownames(x)
+  col = colnames(x)
+  row = rownames(x)
   if(MKrcpp){
-    x <- as(MK_asMatr(x), "dgTMatrix")
+    x = as(MK_asMatr(x), "dgTMatrix")
   }else{
-    x <- as(as.matrix(x), "dgTMatrix")
+    x = as(as.matrix(x), "dgTMatrix")
   }
 
   write.csv(col, paste0(name, "_cell.csv"))
@@ -1367,4 +1382,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 10:50.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 19:02.")
