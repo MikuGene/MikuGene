@@ -213,7 +213,7 @@ MK_Lm <- function(CoDsig,CoBulk,CoVari,Libr){
 
 ## MK_read 8a03a29901b31176e32928321b1349e6 ##
 MK_read <- function(path){
-  MTX = readMM(paste0(path, "_mt.mtx"))
+  MTX = Matrix::readMM(paste0(path, "_mt.mtx"))
   MTX_cell = read.csv(paste0(path, "_cell.csv"), header = T, row.names = 1)$x
   MTX_gene = read.csv(paste0(path, "_gene.csv"), header = T, row.names = 1)$x
   MTX@Dimnames = list(MTX_gene, MTX_cell)
@@ -287,9 +287,10 @@ MK_box <- function(x, Size = 3) {
 ## MK_cbind 8a03a29901b31176e32928321b1349e6
 #
 MK_cbind_i <- function(F1, F2){
-  comfr <- intersect(rownames(F1), rownames(F2))
-  F1 <- F1[comfr,]
-  F2 <- F2[comfr,]
+  comfr = intersect(rownames(F1), rownames(F2))
+  F1 = F1[comfr,]
+  F2 = F2[comfr,]
+  rm(comfr)
   return(cbind(F1, F2))}
 #
 MK_cbind_s <- function(F1, F2){
@@ -299,20 +300,20 @@ MK_cbind_s <- function(F1, F2){
   if(any(dim(F2) == 0)){return(F1)}
 
   ## Each set ##
-  rowall <- c(rownames(F1), rownames(F2))
+  rowall = c(rownames(F1), rownames(F2))
   if(length(setdiff(rowall, rownames(F1))) > 0){
-    SF1r <- matrix(0, nrow = length(setdiff(rowall, rownames(F1))), ncol = ncol(F1))
-    rownames(SF1r) <- setdiff(rowall, rownames(F1))
-    colnames(SF1r) <- colnames(F1)
-    F1 <- rbind(F1, SF1r)
+    SF1r = matrix(0, nrow = length(setdiff(rowall, rownames(F1))), ncol = ncol(F1))
+    rownames(SF1r) = setdiff(rowall, rownames(F1))
+    colnames(SF1r) = colnames(F1)
+    F1 = rbind(F1, SF1r)
     rm(SF1r)}
   if(length(setdiff(rowall, rownames(F2))) > 0){
-    SF2r <- matrix(0, nrow = length(setdiff(rowall, rownames(F2))), ncol = ncol(F2))
-    rownames(SF2r) <- setdiff(rowall, rownames(F2))
-    colnames(SF2r) <- colnames(F2)
-    F2 <- rbind(F2, SF2r)
+    SF2r = matrix(0, nrow = length(setdiff(rowall, rownames(F2))), ncol = ncol(F2))
+    rownames(SF2r) = setdiff(rowall, rownames(F2))
+    colnames(SF2r) = colnames(F2)
+    F2 = rbind(F2, SF2r)
     rm(SF2r)}
-  F2 <- F2[rownames(F1),]
+  F2 = F2[rownames(F1),]
   return(cbind(F1, F2))}
 #
 ## 8a03a29901b31176e32928321b1349e6
@@ -320,9 +321,9 @@ MK_cbind_s <- function(F1, F2){
 ## MK_fix 8a03a29901b31176e32928321b1349e6
 #
 MK_fix <- function(x,Fix){
-  Fname <- setdiff(rownames(Fix),rownames(x))
-  fr <- matrix(0,ncol = ncol(x),nrow = length(Fname),dimnames = list(Fname,colnames(x)))
-  fr <- rbind(x,fr)
+  Fname = setdiff(rownames(Fix),rownames(x))
+  fr = matrix(0,ncol = ncol(x),nrow = length(Fname),dimnames = list(Fname,colnames(x)))
+  fr = rbind(x,fr)
   return(fr)}
 #
 ## 8a03a29901b31176e32928321b1349e6
@@ -447,7 +448,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
 
   write.csv(col, paste0(name, "_cell.csv"))
   write.csv(row, paste0(name, "_gene.csv"))
-  writeMM(x, paste0(name, "_mt.mtx"))
+  Matrix::writeMM(x, paste0(name, "_mt.mtx"))
 
   rm(x)
   gc()}
@@ -470,54 +471,54 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
   }
 
   ## IDname ##
-  IDname <- c(Barfile, Genefile, Exprfile)
+  IDname = c(Barfile, Genefile, Exprfile)
 
   ## Change wd ##
-  Odir <- getwd()
+  Odir = getwd()
   setwd(MKdir)
   if(View){message("MK read10X! Now we working on: ", MKdir, MK_time())}
 
   ## Check File names ##
-  File_name <- list()
+  File_name = list()
   for (i in 1:3) {
-    File_name[[i]] <- grep(IDname[i], list.files(), value = T)
+    File_name[[i]] = grep(IDname[i], list.files(), value = T)
     if(!length(File_name[[i]]) > 0){stop("No files matched by your ", IDname[i], " name !", MK_time())}
   }
 
   ## Check IDin ##
-  File_data <- list()
+  File_data = list()
   for (i in 1:length(IDin)) {
 
     ## In each ID ##
     if(View){message(i, " Now we process: ", IDin[i], MK_time())}
 
     ## Check files ##
-    File_nameI <- list()
+    File_nameI = list()
     for (j in 1:3) {
-      File_nameI[[j]] <- grep(IDin[i], File_name[[j]], value = T)
+      File_nameI[[j]] = grep(IDin[i], File_name[[j]], value = T)
       if(length(File_nameI[[j]]) != 1){stop("Your < ", IDin[i], " > in ID is not unique or cannot match for files !", MK_time())}
     }
 
     ## Read Barcode ##
-    Barcode <- readLines(File_nameI[[1]])
+    Barcode = readLines(File_nameI[[1]])
 
     ## Read Feature ##
-    Gene <- read.delim(File_nameI[[2]], header = F)
-    Ig <- NULL
+    Gene = read.delim(File_nameI[[2]], header = F)
+    Ig = NULL
     if(ncol(Gene) > 2){
-      Ig <- Gene$V3
+      Ig = Gene$V3
       if(Save){write.csv(Ig, paste0(IDin[i], MK_time(), "_Ig.csv"))}
     }
 
     ## Read Expr ##
-    Expr <- readMM(File_nameI[[3]])
+    Expr = Matrix::readMM(File_nameI[[3]])
 
     ## Process ##
-    colnames(Expr) <- paste0(IDin[i], "_", Barcode)
-    rownames(Expr) <- make.unique(Gene$V2)
+    colnames(Expr) = paste0(IDin[i], "_", Barcode)
+    rownames(Expr) = make.unique(Gene$V2)
 
     ## Save ##
-    File_data[[i]] <- Expr
+    File_data[[i]] = Expr
 
     ## Clean ##
     rm(File_nameI, Barcode, Gene, Ig, Expr)
@@ -544,33 +545,33 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200,Inf), nVar = 2.5,
   if(is.null(name)){name = "temp"}
 
   ## Creat Seurat v3.2 ##
-  x <- CreateSeuratObject(x, name, min.features = 200)
+  x = CreateSeuratObject(x, name, min.features = 200)
 
   ## If SCTransform ##
   if(SCT){
-    x <- SCTransform(x, verbose = Plot)
+    x = SCTransform(x, verbose = Plot)
 
   }else{
     ## Standard process ##
 
     ## Filter genes per cell ##
     if(Plot){print(VlnPlot(x, c("nFeature_RNA", "nCount_RNA"), ncol = 2, pt.size = 0.2))}
-    x <- x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2]]
+    x = x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2]]
 
     ## Normalize ##
-    if(Norm){x <- NormalizeData(x, verbose = Plot)}
+    if(Norm){x = NormalizeData(x, verbose = Plot)}
 
     ## Find varible ##
-    x <- FindVariableFeatures(x, nfeatures = 1000*nVar)
+    x = FindVariableFeatures(x, nfeatures = 1000*nVar)
     if(Plot){print(LabelPoints(VariableFeaturePlot(x), points = head(VariableFeatures(x), 10), repel = T))}
 
     ## Scale data ##
-    x <- ScaleData(x, features = rownames(x), verbose = Plot)
+    x = ScaleData(x, features = rownames(x), verbose = Plot)
   }
 
   ## Cluster ##
-  x <- RunPCA(x, features = VariableFeatures(x), verbose = F)
-  x <- x[, !duplicated(x@reductions$pca@cell.embeddings)]
+  x = RunPCA(x, features = VariableFeatures(x), verbose = F)
+  x = x[, !duplicated(x@reductions$pca@cell.embeddings)]
 
   if(BatchRemove){
 
@@ -582,18 +583,18 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200,Inf), nVar = 2.5,
       devtools::install_github("immunogenomics/harmony")
     }
     suppressMessages(library(harmony))
-    AData <- ifelse(SCT, "SCT", "RNA")
-    x <- RunHarmony(x, "orig.ident", max.iter.harmony = 20, max.iter.cluster = 50, assay.use = AData, verbose = Plot, plot_convergence = Plot)
+    AData = ifelse(SCT, "SCT", "RNA")
+    x = RunHarmony(x, "orig.ident", max.iter.harmony = 20, max.iter.cluster = 50, assay.use = AData, verbose = Plot, plot_convergence = Plot)
   }
 
   ## TSNE and UMAP ##
-  ARedu <- ifelse(BatchRemove, "harmony", "pca")
-  x <- RunTSNE(x, dims = 1:50, dim.embed = Dim, reduction = ARedu)
-  if(Umap){x <- RunUMAP(x, dims = 1:50, n.components = Dim, reduction = ARedu)}
+  ARedu = ifelse(BatchRemove, "harmony", "pca")
+  x = RunTSNE(x, dims = 1:50, dim.embed = Dim, reduction = ARedu)
+  if(Umap){x = RunUMAP(x, dims = 1:50, n.components = Dim, reduction = ARedu)}
 
   ## SNN ##
-  x <- FindNeighbors(x, dims = 1:50, reduction = ARedu, verbose = Plot)
-  x <- FindClusters(x, resolution = Reso, verbose = Plot)
+  x = FindNeighbors(x, dims = 1:50, reduction = ARedu, verbose = Plot)
+  x = FindClusters(x, resolution = Reso, verbose = Plot)
 
   if(Plot){print(DimPlot(x, label = T, pt.size = 0.9))}
 
@@ -602,7 +603,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200,Inf), nVar = 2.5,
     dir.create("backup")
     saveRDS(x, paste0("backup/", name, MK_time(), "_backup.rds"))}
   gc()
-  message("MK_scRNA process well done !!!",MK_time())
+  message("MK_scRNA process well done !!!", MK_time())
 
   return(x)
 }
@@ -662,33 +663,33 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
   suppressMessages(library(ggplot2))
 
   ## set enrich ##
-  path <- getwd()
+  path = getwd()
   dir.create("Enrich")
   setwd("Enrich")
 
   ## wdir gene-id ##
-  EnID <- as.character(EnID)
+  EnID = as.character(EnID)
   dir.create(EnID)
   setwd(EnID)
   message("Now working in ", getwd(), MK_time())
-  GeneID <- bitr(gsub("^MT\\.","MT-",x), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+  GeneID = bitr(gsub("^MT\\.","MT-",x), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
   if(Save){write.csv(GeneID, paste0(EnID, MK_time(), "_GeneID.csv"))}
 
   ## GO ##
-  GoRE <- data.frame(tryCatch(
+  GoRE = data.frame(tryCatch(
     enrichGO(gene = as.character(GeneID[,2]), "org.Hs.eg.db", ont = "ALL", pAdjustMethod = "BH", minGSSize = 3, pvalueCutoff = CutP, readable = TRUE),
     error = function(e) data.frame()))
   if(Save){write.csv(GoRE, paste0(EnID, MK_time(), "_GoRE.csv"))}
   if(nrow(GoRE) > 0){
-    GoRE <- na.omit(GoRE[c(which(GoRE$ONTOLOGY == "BP")[1:10], which(GoRE$ONTOLOGY == "CC")[1:10], which(GoRE$ONTOLOGY == "MF")[1:10]),])
-    GoRE <- GoRE[order(GoRE$Count),]
+    GoRE = na.omit(GoRE[c(which(GoRE$ONTOLOGY == "BP")[1:10], which(GoRE$ONTOLOGY == "CC")[1:10], which(GoRE$ONTOLOGY == "MF")[1:10]),])
+    GoRE = GoRE[order(GoRE$Count),]
 
     ## plot ##
     if(!any(installed.packages() %in% "stringr")){
       install.packages("stringr")
     }
     suppressMessages(library(stringr))
-    GoPlot <- ggplot(GoRE,
+    GoPlot = ggplot(GoRE,
                      aes(GoRE$Count/length(as.character(GeneID[,2])), factor(GoRE$Description, levels = GoRE$Description)))+
       geom_point(aes(size = GoRE$Count, color = -1*log10(GoRE$qvalue), shape = GoRE$ONTOLOGY))+
       scale_colour_gradient(low = "blue", high = "red")+
@@ -701,13 +702,13 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
   gc()
 
   ## KEGG ##
-  KeRE <- data.frame(tryCatch(
+  KeRE = data.frame(tryCatch(
     enrichKEGG(gene = as.character(GeneID[,2]), organism = "hsa", pvalueCutoff = CutP),
     error = function(e) data.frame()))
   if(nrow(KeRE) > 0){
-    Ncol <- ncol(KeRE)
+    Ncol = ncol(KeRE)
     for (i in 1:nrow(KeRE)) {
-      KeRE[i,Ncol+1] <- paste(as.character(GeneID[,1])[GeneID[,2] %in% strsplit(KeRE$geneID,"/")[[i]]],collapse = "/")
+      KeRE[i,Ncol+1] = paste(as.character(GeneID[,1])[GeneID[,2] %in% strsplit(KeRE$geneID,"/")[[i]]],collapse = "/")
     }
     rm(Ncol,i)
 
@@ -728,7 +729,7 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
   gc()
 
   ## ReactPA ##
-  PaRE <- data.frame(tryCatch(
+  PaRE = data.frame(tryCatch(
     enrichPathway(gene = as.character(GeneID[,2]), pvalueCutoff = CutP, organism = "human", readable = T)@result,
     error = function(e) data.frame()))
   if(Save){write.csv(PaRE, paste0(EnID, MK_time(), "_PaRE.csv"))}
@@ -743,7 +744,7 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
 ## MK_toMMs 8a03a29901b31176e32928321b1349e6 ##
 #
 MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T){
-  name <- as.character(name)
+  name = as.character(name)
   dir.create(name)
 
   i = 1
@@ -839,20 +840,20 @@ MK_DEGplot <- function(x,Title = "temp",pvalue = 0.01,log2FC = 2,plimit = 30,log
 
 ## MK_rem0 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_rem0 <- function(x,Rem0 = 0.1,raito = T,MKrcpp = F){
+MK_rem0 <- function(x, Rem0 = 0.1, raito = T, MKrcpp = F){
   if(MKrcpp){
-    Mat <- MK_asMatr(x)
+    Mat = MK_asMatr(x)
   }else{
-    Mat <- as.matrix(x)
+    Mat = as.matrix(x)
   }
-  Mat <- apply(Mat,2,as.numeric)
-  r <- apply(Mat,1,function(i) sum(i == 0))
-  if(raito){ok <- which(r <= dim(Mat)[2]*Rem0)
+  Mat = apply(Mat, 2, as.numeric)
+  r = apply(Mat, 1, function(i) sum(i == 0))
+  if(raito){ok = which(r <= dim(Mat)[2]*Rem0)
   }else{
-    ok <- which(r <= Rem0)
+    ok = which(r <= Rem0)
   }
   rm(r)
-  x <- x[ok,]
+  x = x[ok,]
   rm(ok)
   return(x)
 }
@@ -870,40 +871,40 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
 
   ## Filt virable genes ##
   if(nGene < nrow(x)){
-    x <- t(x[order(apply(x, 1, mad), decreasing = T)[1:nGene],])
+    x = t(x[order(apply(x, 1, mad), decreasing = T)[1:nGene],])
   }else{
-    x <- t(x)
+    x = t(x)
   }
 
   ## Check genes and samples ##
-  gsg <- goodSamplesGenes(x)
-  x <- x[gsg$goodSamples, gsg$goodGenes]
+  gsg = goodSamplesGenes(x)
+  x = x[gsg$goodSamples, gsg$goodGenes]
   rm(gsg)
 
   ## Estimate power ##
-  sft <- pickSoftThreshold(x, blockSize = 12000)
-  okpower <- sft$powerEstimate
+  sft = pickSoftThreshold(x, blockSize = 12000)
+  okpower = sft$powerEstimate
   rm(sft)
   if(is.na(okpower)){stop("No okpower !")}
 
   ## Make net ##
-  net <- blockwiseModules(x, power = okpower, numericLabels = T, saveTOMs = T, saveTOMFileBase = paste(name, "WGTOM"), maxBlockSize = 12000)
-  moduleColors <- labels2colors(net$colors)
-  geneTree <- net$dendrograms[[1]]
-  MEs <- orderMEs(moduleEigengenes(x, moduleColors)$eigengenes)
+  net = blockwiseModules(x, power = okpower, numericLabels = T, saveTOMs = T, saveTOMFileBase = paste(name, "WGTOM"), maxBlockSize = 12000)
+  moduleColors = labels2colors(net$colors)
+  geneTree = net$dendrograms[[1]]
+  MEs = orderMEs(moduleEigengenes(x, moduleColors)$eigengenes)
   rm(net)
   load(grep(paste(name, "WGTOM"), list.files(), value = T))
   gc()
 
   ## Return ##
-  RE <- list(x, MEs, moduleColors, okpower, TOM)
+  RE = list(x, MEs, moduleColors, okpower, TOM)
 
   if(Save){
     dir.create("backup")
     saveRDS(RE,paste0("backup/", name, MK_time(), "_WGtom_backup.rds"))
 
     ## Plot TOM ##
-    plotTOM <- -(1 - as.matrix(TOM)) ^ 7
+    plotTOM = -(1 - as.matrix(TOM)) ^ 7
     diag(plotTOM) = NA
     sizeGrWindow(9,9)
     tiff(paste(name,"TOM.tiff"), width = 800, height = 850, pointsize = 30, compression = "lzw")
@@ -1383,4 +1384,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-18 20:13.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-19 09:21.")
