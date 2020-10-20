@@ -543,7 +543,8 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nVar = 3, 
   suppressMessages(library(Seurat))
 
   if(is.null(name)){name = "temp"}
-
+  name = as.character(name)
+  
   ## Creat Seurat v3.2 ##
   x = CreateSeuratObject(x, name, min.features = nGene[1], variable.features.n = 1000*nVar)
   
@@ -1384,4 +1385,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-20 16:05.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-20 16:32.")
