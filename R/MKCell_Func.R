@@ -591,7 +591,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nVar = 3, 
   ## TSNE and UMAP ##
   ARedu = ifelse(BatchRemove, "harmony", "pca")
   x = RunTSNE(x, dims = 1:50, dim.embed = Dim, reduction = ARedu)
-  if(Umap){x = RunUMAP(x, dims = 1:50, n.components = Dim, reduction = ARedu)}
+  if(Umap){x = RunUMAP(x, dims = 1:50, n.components = Dim, reduction = ARedu, verbose = Plot)}
 
   ## SNN ##
   x = FindNeighbors(x, dims = 1:50, reduction = ARedu, verbose = Plot)
@@ -1385,4 +1385,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-20 16:32.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-20 17:54.")
