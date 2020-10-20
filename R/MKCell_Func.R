@@ -536,7 +536,7 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
 
 ## MK_scRNA 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200,Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T){
+MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T){
   if(!any(installed.packages() %in% "Seurat")){
     install.packages("Seurat")
   }
@@ -545,8 +545,8 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200,Inf), nVar = 2.5,
   if(is.null(name)){name = "temp"}
 
   ## Creat Seurat v3.2 ##
-  x = CreateSeuratObject(x, name, min.features = 200)
-
+  x = CreateSeuratObject(x, name, min.features = nGene[1])
+  
   ## If SCTransform ##
   if(SCT){
     x = SCTransform(x, verbose = Plot)
