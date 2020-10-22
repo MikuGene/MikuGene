@@ -347,21 +347,23 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   # Rm MT #
   if(Mito_rm){
   
-  # MT-, MTATP, MTRNR, MTND, MTCO, MTCYB #
-  if(verbose){
-    print(grep("^MT-", rownames(x), value = T)[1:6])
-    print(grep("^MTATP", rownames(x), value = T)[1:6])
-    print(grep("^MTRNR", rownames(x), value = T)[1:6])
-    print(grep("^MTND", rownames(x), value = T)[1:6])
-    print(grep("^MTCO", rownames(x), value = T)[1:6])
-    print(grep("^MTCYB", rownames(x), value = T)[1:6])
-  }        
+  # MT-, MTATP, MTRNR, MTND, MTCO, MTCYB, MTT #
+    if(verbose){
+      print(grep("^MT-", rownames(x), value = T)[1:6])
+      print(grep("^MTATP", rownames(x), value = T)[1:6])
+      print(grep("^MTRNR", rownames(x), value = T)[1:6])
+      print(grep("^MTND", rownames(x), value = T)[1:6])
+      print(grep("^MTCO", rownames(x), value = T)[1:6])
+      print(grep("^MTCYB", rownames(x), value = T)[1:6])
+      print(grep("^MTT", rownames(x), value = T)[1:6])
+    }
   x = x[!grepl("^MT-", rownames(x)),]
   x = x[!grepl("^MTATP", rownames(x)),]
   x = x[!grepl("^MTRNR", rownames(x)),]
   x = x[!grepl("^MTND", rownames(x)),]
   x = x[!grepl("^MTCO", rownames(x)),]
   x = x[!grepl("^MTCYB", rownames(x)),]
+  x = x[!grepl("^MTT", rownames(x)),]
   }
   
 
@@ -1385,4 +1387,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-20 17:54.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-22 10:41.")
