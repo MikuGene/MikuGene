@@ -349,6 +349,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   
   # MT-, MTATP, MTRNR, MTND, MTCO, MTCYB, MTT #
     if(verbose){
+      message("Removing MT-; MTATP; MTRNR; MTND; MTCO; MTCYB; MTT ...", MK_time())
       print(grep("^MT-", rownames(x), value = T)[1:6])
       print(grep("^MTATP", rownames(x), value = T)[1:6])
       print(grep("^MTRNR", rownames(x), value = T)[1:6])
@@ -370,6 +371,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   # Rm AC #
   if(AC_rm){
     if(verbose){
+      message("Removing AX; LINC; YRNA; LOC; CTX-; XX- ...", MK_time())
       print(grep("^A[A-Z][0-9][0-9]", rownames(x), value = T)[1:6])
       print(grep("^LINC[0-9]", rownames(x), value = T)[1:6])
       print(rownames(x)[grepl("^Y-RNA", rownames(x)) | grepl("^Y_RNA", rownames(x))][1:6])
@@ -388,6 +390,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   # Rm RP #
   if(RP_rm){
     if(verbose){
+      message("Removing RP-; orf; APXXX; ENSGX ...", MK_time())
       print(rownames(x)[grepl("^RP", rownames(x)) & grepl("-", rownames(x))][1:6])
       print(grep("orf[0-9]", rownames(x), value = T)[1:6])
       print(grep("^AP[0-9][0-9][0-9]", rownames(x), value = T)[1:6])
@@ -401,6 +404,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
 
   # Rm RPL and RPS #
   if(RPLS_rm){
+    message("Removing RPL; RPS ...", MK_time())
     if(verbose){print(rownames(x)[grepl("^RPL", rownames(x)) | grepl("^RPS", rownames(x))][1:6])}
     x = x[!(grepl("^RPL", rownames(x)) | grepl("^RPS", rownames(x))),]
   }
@@ -1387,4 +1391,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-22 10:41.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-23 21:39.")
