@@ -222,13 +222,14 @@ MK_read <- function(path){
   return(MTX)}
 #
 MK_reads = function(path, IDin = NULL, verbose = T){
+  name = gsub(".*/", "", path)
   if(is.null(IDin)){
     IDin = unique(gsub("_.*", "", gsub(".* ", "", list.files(path))))
   }
   MKfiles <- list()
   for (i in 1:max(as.numeric(IDin))) {
     if(verbose){message(" Read MM ", i, MK_time())}
-    MKfile = MK_read(paste0(path, "/", path, " ", i))
+    MKfile = MK_read(paste0(path, "/", name, " ", i))
     MKfiles[[i]] = MKfile
     rm(MKfile)
   }
@@ -1391,4 +1392,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-23 21:39.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-24 15:06.")
