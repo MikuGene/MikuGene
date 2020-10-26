@@ -21,9 +21,6 @@ Fastq R2 (or .gz)
   \item{name}{
 Custom naming of this process. Default "temp".
 }
-  \item{Save}{
-Automatically create a EnID folder, and store the resulting files. Default TRUE.
-}
   \item{maxMiss}{
 Max miss-match in Map. Default 3.
 }
