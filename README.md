@@ -74,3 +74,18 @@ Email 2: 2743623823@qq.com <br>
  <b>path:</b> The folder path <i>MK_toMMs</i> has output (When reading, please ensure that the folder has not been modified).<br>
  <b>verbose:</b> Messages in the process will be displayed. Default 'verbose = T'.<br>
  <b><i>OUTPUT:</i></b> This function will read the <i>MK_toMMs</i> output.<br>
+ <br><hr>
+<b><i>5. Virus Mapping:</i></b><br>
+<b><i>1) MK_BuildVirusRef(version = "2020.3", OutVs = "default", verbose = T)</i></b><br>
+ <b>version:</b> The data version of virusite.org. Default "2020.3".<br>
+ <b>OutVs:</b> The SeqID of the virus genome not included in alignment. If none, input NULL. Default 'default'.<br>
+ <b>verbose:</b> Messages in the process will be displayed. Default 'verbose = T'.<br>
+ <b><i>OUTPUT:</i></b> This function will build virus-reference locally.<br>
+ <br>
+<b><i>2) MK_VirMap(path_r1, path_r2, name = "temp", maxMiss = 3, GTF = T)</i></b><br>
+ <b>path_r1:</b> Fastq R1 (or .gz).<br>
+ <b>path_r2:</b> Fastq R2 (or .gz).<br>
+ <b>name:</b> Custom naming of this process. Default 'temp'.<br>
+ <b>maxMiss:</b> Max miss-match in Mapping. Default 3.<br>
+ <b>GTF:</b> Use GTF annotation files. Default 'GTF = T'.<br>
+ <b><i>OUTPUT:</i></b> This function will output the virus-mapping results.<br>
