@@ -58,7 +58,7 @@ Email 2: 2743623823@qq.com <br>
  <b><i>OUTPUT:</i></b> This function will output a list (WG_Tom) of five objects: <b>x</b>, MEs (column is each ME, row is each sample), Colors (color corresponding to each gene), Power (the power of WGCNA soft-threshold), TOM (the calculated topological matrix).<br>
  <br><hr>
 <b><i>4. Save the large scRNA-seq matrix:</i></b><br>
-<b><i>1) MK_toMMs(x, name = "temp", Cells = 10, verbose = F, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T)</i></b><br>
+<b><i>1) MK_toMMs(x, name = "temp", Cells = 10, verbose = F, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T)</i></b><br>
  <b>x:</b> A two-dimensional matrix, including sparse matrices.<br>
  <b>name:</b> Custom naming of this process, which creating a 'name' folder automatically. Default 'temp'.<br>
  <b>Cells:</b> The number of cells (k) used to store the matrix separately. Default 10 (10,000 cells).<br>
@@ -68,6 +68,7 @@ Email 2: 2743623823@qq.com <br>
  <b>AC_rm:</b> Delete lncRNA (ACxxxx) genes. Default 'AC_rm = T'.<br>
  <b>RP_rm:</b> Delete pseudogenes genes. Default 'RP_rm = T'.<br>
  <b>RPLS_rm:</b> Delete ribosome-related genes. Default 'RPLS_rm = T'.<br>
+ <b>MIR_rm:</b> Delete miRNA-related genes. Default 'MIR_rm = T'.<br>
  <b><i>OUTPUT:</i></b> This function will automatically save the <b>x</b> in its own way.<br>
  <br>
 <b><i>2) MK_reads(path, verbose = T)</i></b><br>
