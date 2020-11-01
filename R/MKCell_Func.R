@@ -331,7 +331,7 @@ MK_fix <- function(x,Fix){
 
 ## MK_toMM 8a03a29901b31176e32928321b1349e6
 #
-MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, verbose = F, name = "temp"){
+MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, verbose = F, name = "temp"){
 
   # Change sign #
   if(verbose){print(grep("\\.", rownames(x), value = T)[1:6])}
@@ -415,6 +415,13 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
     message("Removing MIR ...", MK_time())
     if(verbose){print(rownames(x)[grepl("^MIR[0-9]", rownames(x))][1:6])}
     x = x[!grepl("^MIR[0-9]", rownames(x)),]
+  }
+  
+  # Rm ATP #
+  if(ATP_rm){
+    message("Removing ATP ...", MK_time())
+    if(verbose){print(rownames(x)[grepl("^ATP", rownames(x))][1:6])}
+    x = x[!grepl("^ATP", rownames(x)),]
   }
   
   # Rm 0 #
@@ -1399,4 +1406,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-10-26 20:46.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-01 16:01.")
