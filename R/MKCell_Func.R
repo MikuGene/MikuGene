@@ -1337,6 +1337,9 @@ MK_BuildBacterRef <- function(verbose = T){
     Bac_dowm_fa = paste(Down, Bac_Genome_fa, sep = "/")
     Bac_dowm_gtf = paste(Down, Bac_Genome_gtf, sep = "/")
     dir.create("MikuBacRef")
+    if(verbose){
+      message("Downloading genomes.fasta ...", MK_time())
+    }
     MK_Download(c(Bac_dowm_fa, Bac_dowm_gtf),
                 name = c(Bac_Genome_fa, Bac_Genome_gtf),
                 outdir = "MikuBacRef")
@@ -1353,26 +1356,52 @@ MK_BuildBacterRef <- function(verbose = T){
     }
     suppressMessages(library(Biostrings))
     Fa = grep("fna.gz", list.files("MikuBacRef"), value = T)
-    Fa = readBStringSet(Fa)
-    FaID = MK_Exct(Fa@ranges@NAMES, exct = " ")
-    # Save meta #
-    Fa_geno = data.frame(ID = FaID, Length = Fa@ranges@width, Name = Fa@ranges@NAMES)
-    write.csv(Virus_genome, "Virus_genome.csv")
+    Fa_info = list()
+    for (i in 1:floor(length(Fa)/1000)) {
+      a = (i-1)*1000 +1
+      z = i*1000
+      if(verbose){
+        message("Reading Fasta From ", a, " to ", z)
+      }
+      Fna = readBStringSet(paste0("MikuBacRef/", Fa[a:z]))
+      Fna = Fna[Fna@ranges@width < 1e+7]
+      FaID = MK_Exct(Fna@ranges@NAMES, exct = " ")
+      Fa_geno = data.frame(ID = FaID, Length = Fna@ranges@width, Name = Fna@ranges@NAMES)
+      Fa_info[[i]] = Fa_geno
+      Fna@ranges@NAMES = FaID
+      writeXStringSet(Fna, "MikuGenome_bacter.fasta", append = T)
+      rm(Fna, a, z, FaID) + gc()
+    }
+    i = i +1
+    if(length(Fa) %% 1000 != 0){
+      a = (i-1)*1000 +1
+      if(verbose){
+        message("Reading Fasta From ", a, " to ", length(Fa))
+      }
+      Fna = readBStringSet(paste0("MikuBacRef/", Fa[a:length(Fa)]))
+      Fna = Fna[Fna@ranges@width < 1e+7]
+      FaID = MK_Exct(Fna@ranges@NAMES, exct = " ")
+      Fa_geno = data.frame(ID = FaID, Length = Fna@ranges@width, Name = Fna@ranges@NAMES)
+      Fa_info[[i]] = Fa_geno
+      Fna@ranges@NAMES = FaID
+      writeXStringSet(Fna, "MikuGenome_bacter.fasta", append = T)
+      rm(Fna, a, FaID) + gc()
+    }
+    Fa_info = do.call(rbind, Fa_info)
+    write.csv(Fa_info, "Bacter_genome.csv")
+    
     # Make GTF ##
-    Gtf = data.frame(SeqID = FaID, source = "MikuGenome", feature = "exon",
-                     start = 1, end = Fa@ranges@width,
+    Gtf = data.frame(SeqID = Fa_info$ID, source = "MikuGenome", feature = "exon",
+                     start = 1, end = Fa_info$Length,
                      sore = ".", strand = "+", frame = ".",
-                     attributes = paste0("gene_id ", FaID, ";", "transcript_id ", FaID, ";"))
+                     attributes = paste0("gene_id ", Fa_info$ID, ";", "transcript_id ", Fa_info$ID, ";"))
     write.table(Gtf, "MikuGenome_bacter.gtf", row.names = F, col.names = F, sep = "\t", quote = F)
-    # Process fasta name #
-    Fa@ranges@NAMES = FaID
-    writeXStringSet(Geno, "MikuGenome_bacter.fasta", append = F)
-    rm(Fa) + gc()
     
     # Ref from Gene #
     if(verbose){
       message("Processing gtfs (waiting this function)...", MK_time())
     }
+    rm(list = ls())
   }
 }
 #
