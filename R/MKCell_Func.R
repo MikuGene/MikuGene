@@ -571,7 +571,7 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
 
 ## MK_scRNA 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nVar = 3, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T){
+MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nCount = c(200, Inf), nVar = 3, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T){
   if(!any(installed.packages() %in% "Seurat")){
     install.packages("Seurat")
   }
@@ -589,9 +589,14 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nVar = 3, 
     message("Input nGene Max-cutoff: ", MK_time())
     nGene[2] = scan()
     message("Nice Your nGene cut off: ", nGene, MK_time())
+    message("Input nCount Min-cutoff: ", MK_time())
+    nCount[1] = scan()
+    message("Input nCount Max-cutoff: ", MK_time())
+    nCount[2] = scan()
+    message("Nice Your nCount cut off: ", nCount, MK_time())
   }
-  x = x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2]]
-  
+  x = x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2] & x$nCount_RNA >= nCount[1] & x$nCount_RNA <= nCount[2]]
+
   ## If SCTransform ##
   if(SCT){
     x = SCTransform(x, verbose = Plot, variable.features.n = 1000*nVar)
@@ -1453,4 +1458,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-07 20:44.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-07 21:32.")
