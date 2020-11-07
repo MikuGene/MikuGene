@@ -424,11 +424,13 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
     x = x[!grepl("^ATP", rownames(x)),]
   }
   
-  # Rm IGKV #
+  # Rm IGXV #
   if(IGKV_rm){
-    message("Removing IGKVxx-x ...", MK_time())
-    if(verbose){print(rownames(x)[grepl("^IGKV", rownames(x)) & grepl("-", rownames(x))][1:6])}
-    x = x[!(grepl("^IGKV", rownames(x)) & grepl("-", rownames(x))),]
+    message("Removing IGXVxx-x ...", MK_time())
+    if(verbose){
+      print(rownames(x)[grepl("^IG[A-Z]V", rownames(x)) & grepl("-", rownames(x))][1:6])
+    }
+    x = x[!(grepl("^IG[A-Z]V", rownames(x)) & grepl("-", rownames(x))),]
   }
   
   # Rm 0 #
@@ -1442,4 +1444,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-06 09:58.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-07 16:43.")
