@@ -581,19 +581,23 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nVar = 3, 
   name = as.character(name)
   
   ## Creat Seurat v3.2 ##
-  x = CreateSeuratObject(x, name, min.features = nGene[1], variable.features.n = 1000*nVar)
+  x = CreateSeuratObject(x, name, min.features = nGene[1])
+  if(Plot){
+    print(VlnPlot(x, c("nFeature_RNA", "nCount_RNA"), ncol = 2, pt.size = 0.2))
+    message("Input nGene Min-cutoff: ", MK_time())
+    nGene[1] = scan()
+    message("Input nGene Max-cutoff: ", MK_time())
+    nGene[2] = scan()
+    message("Nice Your nGene cut off: ", nGene, MK_time())
+  }
+  x = x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2]]
   
   ## If SCTransform ##
   if(SCT){
-    x = SCTransform(x, verbose = Plot)
+    x = SCTransform(x, verbose = Plot, variable.features.n = 1000*nVar)
 
   }else{
     ## Standard process ##
-
-    ## Filter genes per cell ##
-    if(Plot){print(VlnPlot(x, c("nFeature_RNA", "nCount_RNA"), ncol = 2, pt.size = 0.2))}
-    x = x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2]]
-
     ## Normalize ##
     if(Norm){x = NormalizeData(x, verbose = Plot)}
 
@@ -1449,4 +1453,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-07 17:15.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-07 20:44.")
