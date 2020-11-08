@@ -583,6 +583,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nCount = c
   ## Creat Seurat v3.2 ##
   x = CreateSeuratObject(x, name, min.features = nGene[1])
   if(Plot){
+    message("Matrix dim: ", dim(x), MK_time())
     print(VlnPlot(x, c("nFeature_RNA", "nCount_RNA"), ncol = 2, pt.size = 0.2))
     message("Input nGene Min-cutoff: ", MK_time())
     nGene[1] = scan()
@@ -596,6 +597,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nCount = c
     message("Nice Your nCount cut off: ", nCount, MK_time())
   }
   x = x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2] & x$nCount_RNA >= nCount[1] & x$nCount_RNA <= nCount[2]]
+  if(Plot){message("Matrix dim: ", dim(x), MK_time())}
 
   ## If SCTransform ##
   if(SCT){
@@ -1458,4 +1460,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-07 21:32.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-08 10:33.")
