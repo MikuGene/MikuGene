@@ -334,7 +334,10 @@ MK_fix <- function(x,Fix){
 MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGKV_rm = T, verbose = F, name = "temp"){
 
   # Change sign #
-  if(verbose){print(grep("\\.", rownames(x), value = T)[1:6])}
+  if(verbose){
+    print(grep("\\.", rownames(x), value = T)[1:6])
+    print(grep("_", rownames(x), value = T)[1:6])
+  }
   rownames(x) = gsub("\\.", "-", rownames(x))
   rownames(x) = gsub("_", "-", rownames(x))
   
@@ -1461,4 +1464,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-08 10:55.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-08 10:57.")
