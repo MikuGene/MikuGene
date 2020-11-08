@@ -336,6 +336,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   # Change sign #
   if(verbose){print(grep("\\.", rownames(x), value = T)[1:6])}
   rownames(x) = gsub("\\.", "-", rownames(x))
+  rownames(x) = gsub("_", "-", rownames(x))
   
   # Same gene #
   if(sum(rownames(x) %in% c("IGJ", "JCHAIN")) > 1){
@@ -583,21 +584,21 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nCount = c
   ## Creat Seurat v3.2 ##
   x = CreateSeuratObject(x, name, min.features = nGene[1])
   if(Plot){
-    message("Matrix dim: ", dim(x), MK_time())
+    message("Matrix dim: ", paste(dim(x), collapse = " "), MK_time())
     print(VlnPlot(x, c("nFeature_RNA", "nCount_RNA"), ncol = 2, pt.size = 0.2))
     message("Input nGene Min-cutoff: ", MK_time())
     nGene[1] = scan()
     message("Input nGene Max-cutoff: ", MK_time())
     nGene[2] = scan()
-    message("Nice Your nGene cut off: ", nGene, MK_time())
+    message("Nice Your nGene cut off: ", paste(nGene, collapse = " "), MK_time())
     message("Input nCount Min-cutoff: ", MK_time())
     nCount[1] = scan()
     message("Input nCount Max-cutoff: ", MK_time())
     nCount[2] = scan()
-    message("Nice Your nCount cut off: ", nCount, MK_time())
+    message("Nice Your nCount cut off: ", paste(nCount, collapse = " "), MK_time())
   }
   x = x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2] & x$nCount_RNA >= nCount[1] & x$nCount_RNA <= nCount[2]]
-  if(Plot){message("Matrix dim: ", dim(x), MK_time())}
+  if(Plot){message("Matrix dim: ", paste(dim(x), collapse = " "), MK_time())}
 
   ## If SCTransform ##
   if(SCT){
@@ -1460,4 +1461,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-08 10:33.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-08 10:55.")
