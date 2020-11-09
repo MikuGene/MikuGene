@@ -663,7 +663,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nCount = c
 
 ## MK_singler 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_singler = function(x, ref = "HPCA", mode = "main", Cells = 10){
+MK_singler = function(x, Ref = "HPCA", mode = "main", Cells = 10){
   
   if(!any(installed.packages() %in% "celldex")){
     if(!any(installed.packages() %in% "BiocManager")){
@@ -681,10 +681,10 @@ MK_singler = function(x, ref = "HPCA", mode = "main", Cells = 10){
   }
   suppressMessages(library(SingleR))
   
-  if(ref == "HPCA"){
+  if(Ref == "HPCA"){
     ref = celldex::HumanPrimaryCellAtlasData()
   }
-  if(ref == "BPED"){
+  if(Ref == "BPED"){
     ref = celldex::BlueprintEncodeData()
   }
   
@@ -1527,4 +1527,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-09 17:13.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-09 17:17.")
