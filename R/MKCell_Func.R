@@ -661,6 +661,69 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nCount = c
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
+## MK_singler 8a03a29901b31176e32928321b1349e6 ##
+#
+MK_singler = function(x, ref = "HPCA", mode = "main", Cells = 10){
+  
+  if(!any(installed.packages() %in% "celldex")){
+    if(!any(installed.packages() %in% "BiocManager")){
+      install.packages("BiocManager")
+    }
+    BiocManager::install("celldex")
+  }
+  suppressMessages(library(celldex))
+  
+  if(!any(installed.packages() %in% "SingleR")){
+    if(!any(installed.packages() %in% "BiocManager")){
+      install.packages("BiocManager")
+    }
+    BiocManager::install("SingleR")
+  }
+  suppressMessages(library(SingleR))
+  
+  if(ref == "HPCA"){
+    ref = HumanPrimaryCellAtlasData()
+  }
+  if(ref == "BPED"){
+    ref = BlueprintEncodeData()
+  }
+  
+  if(mode == "main"){
+    ref_l = ref$label.main
+  }
+  if(mode == "fine"){
+    ref_l = ref$label.fine
+  }
+  
+  Labels = list()
+  i = 1
+  
+  ## more 10k*Cells ##
+  if(ncol(x) >= (Cells*1000)){
+    for (i in 1:floor(ncol(x)/(Cells*1000))) {
+      message("SingleR ", i, MK_time())
+      Label_t = SingleR::SingleR(x[, ((i-1)*(Cells*1000)+1):(i*(Cells*1000))], ref, labels = ref_l)
+      Labels[[i]] = Label_t$pruned.labels
+      rm(Label_t)
+    }
+    i = i + 1
+  }
+  
+  ## remain ##
+  if(ncol(x) %% (Cells*1000) != 0){
+    message("SingleR ex ", i, MK_time())
+    Label_t = SingleR::SingleR(x[, ((i-1)*(Cells*1000)+1):ncol(x)], ref, labels = ref_l)
+    Labels[[i]] = Label_t$pruned.labels
+    rm(Label_t)
+  }
+  Labels = do.call(c, Labels)
+  rm(ref, ref_l)
+  
+  return(Labels)
+}
+#
+## 8a03a29901b31176e32928321b1349e6 ##            
+                   
 ## MK_clear 8a03a29901b31176e32928321b1349e6 ##
 #
 MK_clear <- function(x,name = "temp",Save = T){
@@ -1464,4 +1527,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-08 10:57.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-09 15:23.")
