@@ -24,7 +24,7 @@ Email 2: 2743623823@qq.com <br>
 
 <h2>Functions:</h2>
 <b><i>1. Single-cell RNA-seq data analysis:</i></b><br>
-<b><i>MK_scRNA(x, name = "temp", Reso = 0.6, nGene = c(200,Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T)</i></b><br>
+<b><i>1) MK_scRNA(x, name = "temp", Reso = 0.6, nGene = c(200,Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T)</i></b><br>
  <b>x:</b> A two-dimensional matrix, including sparse matrices.<br>
  <b>name:</b> Custom naming of this process, such as file name for automatic backup storage, etc. Default 'temp'.<br>
  <b>Reso:</b> The resolution of cell clustering. Default 0.6. FindCluster() can be used to change the resolution of the output result.<br>
@@ -38,6 +38,13 @@ Email 2: 2743623823@qq.com <br>
  <b>Plot:</b> Messages and pictures in the process will be displayed. Default 'Plot = T'<br>
  <b>Save:</b> The process will automatically create a backup folder under the working path, and store the resulting object as a name_backup.rds file. Default 'Save = T'<br>
  <b><i>OUTPUT:</i></b> This function will output a Seurat object whose cell clustering has been analyzed.<br>
+ <br>
+<b><i>2) MK_singler(x, ref = "HPCA", mode = "main", Cells = 10)</i></b><br>
+ <b>x:</b> A two-dimensional matrix, including sparse matrices.<br>
+ <b>ref:</b> Ref-data, including HPCA and BPED.<br>
+ <b>mode:</b> Mode to identify cell, including main and fine.<br>
+ <b>Cells:</b> The number of cells (k) used to run separately. Default 10 (10,000 cells).<br>
+ <b><i>OUTPUT:</i></b> This function will output a pruned cell-label.<br>
  <br><hr>
 <b><i>2. Gene biological functional enrichment analysis:</i></b><br>
 <b><i>MK_Enrich(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.3)</i></b><br>
