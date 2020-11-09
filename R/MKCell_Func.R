@@ -695,7 +695,7 @@ MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10
   if(ncol(x) >= (Cells*1000)){
     for (i in 1:floor(ncol(x)/(Cells*1000))) {
       message("SingleR ", i, MK_time())
-      Label_t = SingleR::SingleR(x[, ((i-1)*(Cells*1000)+1):(i*(Cells*1000))], ref, labels = ref_l, clusters = cluster)
+      Label_t = SingleR::SingleR(x[, ((i-1)*(Cells*1000)+1):(i*(Cells*1000))], ref, labels = ref_l, clusters = cluster[((i-1)*(Cells*1000)+1):(i*(Cells*1000))])
       Labels[[i]] = Label_t$pruned.labels
       rm(Label_t)
     }
@@ -705,7 +705,7 @@ MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10
   ## remain ##
   if(ncol(x) %% (Cells*1000) != 0){
     message("SingleR ex ", i, MK_time())
-    Label_t = SingleR::SingleR(x[, ((i-1)*(Cells*1000)+1):ncol(x)], ref, labels = ref_l, clusters = cluster)
+    Label_t = SingleR::SingleR(x[, ((i-1)*(Cells*1000)+1):ncol(x)], ref, labels = ref_l, clusters = cluster[((i-1)*(Cells*1000)+1):ncol(x)])
     Labels[[i]] = Label_t$pruned.labels
     rm(Label_t)
   }
@@ -1520,4 +1520,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-09 21:56.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-09 22:05.")
