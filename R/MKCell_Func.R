@@ -682,10 +682,10 @@ MK_singler = function(x, ref = "HPCA", mode = "main", Cells = 10){
   suppressMessages(library(SingleR))
   
   if(ref == "HPCA"){
-    ref = HumanPrimaryCellAtlasData()
+    ref = celldex::HumanPrimaryCellAtlasData()
   }
   if(ref == "BPED"){
-    ref = BlueprintEncodeData()
+    ref = celldex::BlueprintEncodeData()
   }
   
   if(mode == "main"){
@@ -1527,4 +1527,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-09 15:23.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-09 17:13.")
