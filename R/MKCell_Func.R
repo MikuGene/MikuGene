@@ -712,11 +712,11 @@ MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10
     Labels[[i]] = Label_t$labels
     rm(Label_t)
   }
-  Labels = do.call(c, Labels)
+  Labels = as.character(do.call(c, Labels))
   rm(ref, ref_l)
   
   if(Save){
-    write.csv(Labels, paste0(name, MK_time(),".csv"), row.names = F, quote = F)
+    write.csv(Labels, paste0(name, MK_time(),".csv"), row.names = F, quote = T)
   }
   return(Labels)
 }
@@ -1526,4 +1526,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-10 17:36.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-10 22:18.")
