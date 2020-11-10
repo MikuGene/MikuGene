@@ -663,7 +663,10 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nCount = c
 
 ## MK_singler 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10){
+MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10, name = NULL, Save = T){
+  
+  if(is.null(name)){name = "temp"}
+  name = as.character(name)
   
   if(!any(installed.packages() %in% "celldex")){
     if(!any(installed.packages() %in% "BiocManager")){
@@ -696,7 +699,7 @@ MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10
     for (i in 1:floor(ncol(x)/(Cells*1000))) {
       message("SingleR ", i, MK_time())
       Label_t = SingleR::SingleR(x[, ((i-1)*(Cells*1000)+1):(i*(Cells*1000))], ref, labels = ref_l, clusters = cluster[((i-1)*(Cells*1000)+1):(i*(Cells*1000))])
-      Labels[[i]] = Label_t$pruned.labels
+      Labels[[i]] = Label_t$labels
       rm(Label_t)
     }
     i = i + 1
@@ -706,12 +709,15 @@ MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10
   if(ncol(x) %% (Cells*1000) != 0){
     message("SingleR ex ", i, MK_time())
     Label_t = SingleR::SingleR(x[, ((i-1)*(Cells*1000)+1):ncol(x)], ref, labels = ref_l, clusters = cluster[((i-1)*(Cells*1000)+1):ncol(x)])
-    Labels[[i]] = Label_t$pruned.labels
+    Labels[[i]] = Label_t$labels
     rm(Label_t)
   }
   Labels = do.call(c, Labels)
   rm(ref, ref_l)
   
+  if(Save){
+    write.csv(Labels, paste0(name, MK_time(),".csv"), row.names = F, quote = F)
+  }
   return(Labels)
 }
 #
@@ -1520,4 +1526,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-09 22:05.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-10 17:36.")
