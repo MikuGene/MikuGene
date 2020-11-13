@@ -686,6 +686,7 @@ MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10
   
   if(Ref == "HPCA"){ref = celldex::HumanPrimaryCellAtlasData()}
   if(Ref == "BPED"){ref = celldex::BlueprintEncodeData()}
+  if(Ref == "DICE"){ref = celldex::DatabaseImmuneCellExpressionData()}
   
   if(mode == "main"){ref_l = ref$label.main}
   if(mode == "fine"){ref_l = ref$label.fine}
@@ -1526,4 +1527,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-10 22:18.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-13 16:53.")
