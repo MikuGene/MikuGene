@@ -24,7 +24,7 @@ Email 2: 2743623823@qq.com <br>
 
 <h2>Functions:</h2>
 <b><i>1. Single-cell RNA-seq data analysis:</i></b><br>
-<b><i>1) MK_scRNA(x, name = "temp", Reso = 0.6, nGene = c(200,Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T)</i></b><br>
+<b><i>1) MK_scRNA(x, name = "temp", Reso = 0.8, nGene = c(200,Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T)</i></b><br>
  <b>x:</b> A two-dimensional matrix, including sparse matrices.<br>
  <b>name:</b> Custom naming of this process, such as file name for automatic backup storage, etc. Default 'temp'.<br>
  <b>Reso:</b> The resolution of cell clustering. Default 0.6. FindCluster() can be used to change the resolution of the output result.<br>
