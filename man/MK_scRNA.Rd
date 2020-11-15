@@ -8,7 +8,7 @@ MK_scRNA: One-step scRNA-seq data analysis.
 One-step single-cell RNA-seq data analysis based on Seurat v3 and harmony R package.
 }
 \usage{
-MK_scRNA(x, name = NULL, Reso = 0.6, nGene = c(200, Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T)
+MK_scRNA(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +19,7 @@ A two-dimensional matrix, including sparse matrix. (Column: cells; Row: features
 Custom naming of this process, such as file name for backup. Default "temp".
 }
   \item{Reso}{
-The resolution of cell clustering (Seurat::FindCluster() can be used to change the resolution of the output result). Default 0.6.
+The resolution of cell clustering (Seurat::FindCluster() can be used to change the resolution of the output result). Default 0.8.
 }
   \item{nGene}{
 Screen cells by setting an interval for the number of genes contained in each cell in standard procedure. Default c(200, Inf).
