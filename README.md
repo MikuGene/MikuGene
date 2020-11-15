@@ -39,10 +39,11 @@ Email 2: 2743623823@qq.com <br>
  <b>Save:</b> The process will automatically create a backup folder under the working path, and store the resulting object as a name_backup.rds file. Default 'Save = T'<br>
  <b><i>OUTPUT:</i></b> This function will output a Seurat object whose cell clustering has been analyzed.<br>
  <br>
-<b><i>2) MK_singler(x, ref = "HPCA", mode = "main", Cells = 10)</i></b><br>
+<b><i>2) MK_singler(x, ref = "HPCA", mode = "main", cluster = NULL, Cells = 10)</i></b><br>
  <b>x:</b> A two-dimensional matrix, including sparse matrices.<br>
- <b>ref:</b> Ref-data, including HPCA and BPED.<br>
+ <b>ref:</b> Ref-data, including HPCA (<i>HumanPrimaryCellAtlasData</i>), BPED (<i>BlueprintEncodeData</i>) and DICE (<i>DatabaseImmuneCellExpressionData</i>).<br>
  <b>mode:</b> Mode to identify cell, including main and fine.<br>
+ <b>cluster:</b> Cluster identities for each cell in <b>x</b>.<br>
  <b>Cells:</b> The number of cells (k) used to run separately. Default 10 (10,000 cells).<br>
  <b><i>OUTPUT:</i></b> This function will output a pruned cell-label.<br>
  <br><hr>
