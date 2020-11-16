@@ -1353,24 +1353,18 @@ MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T){
   GeneID = read.csv("Virus_gene.csv",row.names = 1)
 
   # Align #
-  align(index = "MikuVirusref",
-        readfile1 = path_r1,
-        readfile2 = path_r2,
-        output_file = paste0(name, ".BAM"),
-        nBestLocations = nrow(GenoID),
-        maxMismatches = maxMiss,
-        nthreads = 6)
+  Rsubread::align(index = "MikuVirusref", readfile1 = path_r1, readfile2 = path_r2,
+                  output_file = paste0(name, ".BAM"), nBestLocations = nrow(GenoID),
+                  maxMismatches = maxMiss, nthreads = 6)
 
   # fea-count #
   if(GTF){
-    Fea1 = featureCounts(paste0(name, ".BAM"),
-                         annot.ext = "MikuGene_virus.gtf",
-                         isGTFAnnotationFile = T,
-                         verbose = F)
-    Fea2 = featureCounts(paste0(name, ".BAM"),
-                         annot.ext = "MikuGenome_virus.gtf",
-                         isGTFAnnotationFile = T,
-                         verbose = F)
+    Fea1 = Rsubread::featureCounts(paste0(name, ".BAM"),
+                                   annot.ext = "MikuGene_virus.gtf",
+                                   isGTFAnnotationFile = T, verbose = F)
+    Fea2 = Rsubread::featureCounts(paste0(name, ".BAM"),
+                                   annot.ext = "MikuGenome_virus.gtf",
+                                   isGTFAnnotationFile = T, verbose = F)
 
     # process gene #
     Re_Gene = data.frame(Fea1$counts)
@@ -1527,4 +1521,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-15 12:09.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-16 23:01.")
