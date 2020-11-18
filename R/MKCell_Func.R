@@ -1359,10 +1359,10 @@ MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T){
 
   # fea-count #
   if(GTF){
-    Fea1 = Rsubread::featureCounts(paste0(name, ".BAM"),
+    Fea1 = Rsubread::featureCounts(paste0(name, ".BAM"), isPairedEnd = T,
                                    annot.ext = "MikuGene_virus.gtf",
                                    isGTFAnnotationFile = T, verbose = F)
-    Fea2 = Rsubread::featureCounts(paste0(name, ".BAM"),
+    Fea2 = Rsubread::featureCounts(paste0(name, ".BAM"), isPairedEnd = T,
                                    annot.ext = "MikuGenome_virus.gtf",
                                    isGTFAnnotationFile = T, verbose = F)
 
@@ -1521,4 +1521,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-16 23:01.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-18 14:37.")
