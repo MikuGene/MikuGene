@@ -575,7 +575,7 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
 
 ## MK_scRNA 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c(200, Inf), nVar = 3, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T){
+MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c(200, Inf), nVar = 3, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T, MinMem = T){
   if(!any(installed.packages() %in% "Seurat")){
     install.packages("Seurat")
   }
@@ -605,8 +605,8 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c
 
   ## If SCTransform ##
   if(SCT){
-    x = SCTransform(x, verbose = Plot, variable.features.n = 1000*nVar)
-
+    x = SCTransform(x, verbose = Plot, variable.features.n = 1000*nVar, return.only.var.genes = MinMem)
+    x@assays$RNA@data = matrix()
   }else{
     ## Standard process ##
     ## Normalize ##
@@ -1521,4 +1521,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-18 14:37.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-19 15:58.")
