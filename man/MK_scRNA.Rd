@@ -25,7 +25,7 @@ The resolution of cell clustering (Seurat::FindCluster() can be used to change t
 Screen cells by setting an interval for the number of genes contained in each cell in standard procedure. Default c(200, Inf).
 }
   \item{nVar}{
-Filter the number of highly variable genes (k). Default 2.5 (2500 variable genes).
+Filter the number of highly variable genes (k). Default 3 (3000 variable genes).
 }
   \item{Dim}{
 The dimension of unsupervised clustering. Default 2.
@@ -40,10 +40,13 @@ Harmony will be applied to remove batch effects according "orig.ident". Default 
 "RunUMAP" function in Seurat will be applied. Default FALSE.
 }
   \item{Plot}{
-%%     ~~Describe \code{Plot} here~~
+Messages and pictures in the process will be displayed. Default TRUE.
 }
   \item{Norm}{
 "LogNormalize" will be applied in standard procedure. Default TRUE.
+}
+  \item{MinMem}{
+Memory saving mode. Default TRUE.
 }
   \item{save}{
 Automatically create a backup folder under the working path, and store the resulting object as a name-time_backup.rds file. Default TRUE.
