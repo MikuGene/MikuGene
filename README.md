@@ -21,7 +21,7 @@ Email 2: 2743623823@qq.com <br>
 <br>
 <b><i>devtools::install_github("MikuGene/MikuGene")</i></b><br>
 <br>
-<i>@.@ Website: </i><br>
+<i>@.@ On-line analysis platform: </i><br>
 <br>
 <b><i>http://hpvgroup.imwork.net/MKCell/</i></b><br>
 <br><hr>
