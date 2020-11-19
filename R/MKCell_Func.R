@@ -331,7 +331,7 @@ MK_fix <- function(x,Fix){
 
 ## MK_toMM 8a03a29901b31176e32928321b1349e6
 #
-MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGKV_rm = T, verbose = F, name = "temp"){
+MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T, verbose = F, name = "temp"){
 
   # Change sign #
   if(verbose){
@@ -434,7 +434,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   }
   
   # Rm IGXV #
-  if(IGKV_rm){
+  if(IGXV_rm){
     message("Removing IGXVxx-x ...", MK_time())
     if(verbose){
       print(rownames(x)[grepl("^IG[A-Z]V", rownames(x)) & grepl("-", rownames(x))][1:6])
@@ -1521,4 +1521,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-19 15:58.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-19 16:34.")
