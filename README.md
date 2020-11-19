@@ -39,12 +39,14 @@ Email 2: 2743623823@qq.com <br>
  <b>Save:</b> The process will automatically create a backup folder under the working path, and store the resulting object as a name_backup.rds file. Default 'Save = T'<br>
  <b><i>OUTPUT:</i></b> This function will output a Seurat object whose cell clustering has been analyzed.<br>
  <br>
-<b><i>2) MK_singler(x, ref = "HPCA", mode = "main", cluster = NULL, Cells = 10)</i></b><br>
+<b><i>2) MK_singler(x, ref = "HPCA", mode = "main", cluster = NULL, Cells = 10, name = NULL, Save = T)</i></b><br>
  <b>x:</b> A two-dimensional matrix, including sparse matrices.<br>
- <b>ref:</b> Ref-data, including HPCA (<i>HumanPrimaryCellAtlasData</i>), BPED (<i>BlueprintEncodeData</i>) and DICE (<i>DatabaseImmuneCellExpressionData</i>).<br>
- <b>mode:</b> Mode to identify cell, including main and fine.<br>
+ <b>ref:</b> Ref-data, including HPCA (<i>HumanPrimaryCellAtlasData</i>), BPED (<i>BlueprintEncodeData</i>) and DICE (<i>DatabaseImmuneCellExpressionData</i>). Default "HPCA".<br>
+ <b>mode:</b> Mode to identify cell, including main and fine. Default "main".<br>
  <b>cluster:</b> Cluster identities for each cell in <b>x</b>.<br>
  <b>Cells:</b> The number of cells (k) used to run separately. Default 10 (10,000 cells).<br>
+ <b>name:</b> Custom naming of this process. Default 'temp'.<br>
+ <b>Save:</b> The process will automatically create a backup folder under the working path, and store the resulting object as a name.csv file. Default 'Save = T'<br>
  <b><i>OUTPUT:</i></b> This function will output a pruned cell-label.<br>
  <br><hr>
 <b><i>2. Gene biological functional enrichment analysis:</i></b><br>
@@ -66,7 +68,7 @@ Email 2: 2743623823@qq.com <br>
  <b><i>OUTPUT:</i></b> This function will output a list (WG_Tom) of five objects: <b>x</b>, MEs (column is each ME, row is each sample), Colors (color corresponding to each gene), Power (the power of WGCNA soft-threshold), TOM (the calculated topological matrix).<br>
  <br><hr>
 <b><i>4. Save the large scRNA-seq matrix:</i></b><br>
-<b><i>1) MK_toMMs(x, name = "temp", Cells = 10, verbose = F, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T)</i></b><br>
+<b><i>1) MK_toMMs(x, name = "temp", Cells = 10, verbose = F, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T)</i></b><br>
  <b>x:</b> A two-dimensional matrix, including sparse matrices.<br>
  <b>name:</b> Custom naming of this process, which creating a 'name' folder automatically. Default 'temp'.<br>
  <b>Cells:</b> The number of cells (k) used to store the matrix separately. Default 10 (10,000 cells).<br>
@@ -76,7 +78,9 @@ Email 2: 2743623823@qq.com <br>
  <b>AC_rm:</b> Delete lncRNA (ACxxxx) genes. Default 'AC_rm = T'.<br>
  <b>RP_rm:</b> Delete pseudogenes genes. Default 'RP_rm = T'.<br>
  <b>RPLS_rm:</b> Delete ribosome-related genes. Default 'RPLS_rm = T'.<br>
- <b>MIR_rm:</b> Delete miRNA-related genes. Default 'MIR_rm = T'.<br>
+ <b>MIR_rm:</b> Delete miRNA genes. Default 'MIR_rm = T'.<br>
+ <b>ATP_rm:</b> Delete ATP-related genes. Default 'ATP_rm = T'.<br>
+ <b>IGXV_rm:</b> Delete IGXV genes. Default 'IGXV_rm = T'.<br>
  <b><i>OUTPUT:</i></b> This function will automatically save the <b>x</b> in its own way.<br>
  <br>
 <b><i>2) MK_reads(path, verbose = T)</i></b><br>
