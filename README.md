@@ -19,7 +19,11 @@ Email 2: 2743623823@qq.com <br>
 <br>
 <i>@.@ How to use MikuGene R package:</i><br>
 <br>
-<b><i>devtools::install_github("MikuGene/MikuGene")</i></b>
+<b><i>devtools::install_github("MikuGene/MikuGene")</i></b><br>
+<br>
+<i>@.@ Website: </i><br>
+<br>
+<b><i>http://hpvgroup.imwork.net/MKCell/</i></b><br>
 <br><hr>
 
 <h2>Functions:</h2>
