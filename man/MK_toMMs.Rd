@@ -39,6 +39,15 @@ Delete pseudogenes genes. Default TRUE.
   \item{RPLS_rm}{
 Delete ribosome-related genes. Default TRUE.
 }
+  \item{MIR_rm}{
+Delete miRNA genes. Default TRUE.
+}
+  \item{ATP_rm}{
+Delete ATP genes. Default TRUE.
+}
+  \item{IGXV_rm}{
+Delete IGXV genes. Default TRUE.
+}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
