@@ -857,7 +857,7 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
 
 ## MK_toMMs 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T){
+MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T){
   name = as.character(name)
   dir.create(name)
 
@@ -867,7 +867,7 @@ MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_
     for (i in 1:floor(ncol(x)/(Cells*1000))) {
       message("Save MM ", i, MK_time())
       MK_toMM(x[, ((i-1)*(Cells*1000)+1):(i*(Cells*1000))], name = paste0(name, "/", name, " ", i), verbose = verbose,
-              HK_bm = HK_bm, Mito_rm = Mito_rm, AC_rm = AC_rm, RP_rm = RP_rm, RPLS_rm = RPLS_rm)
+              HK_bm = HK_bm, Mito_rm = Mito_rm, AC_rm = AC_rm, RP_rm = RP_rm, RPLS_rm = RPLS_rm, MIR_rm = MIR_rm, ATP_rm = ATP_rm, IGXV_rm = IGXV_rm)
     }
     i = i + 1
   }
@@ -876,7 +876,7 @@ MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_
   if(ncol(x) %% (Cells*1000) != 0){
     message("Save MM ex ", i, MK_time())
     MK_toMM(x[, ((i-1)*(Cells*1000)+1):ncol(x)], name = paste0(name, "/", name, " ", i), verbose = verbose,
-            HK_bm = HK_bm, Mito_rm = Mito_rm, AC_rm = AC_rm, RP_rm = RP_rm, RPLS_rm = RPLS_rm)
+            HK_bm = HK_bm, Mito_rm = Mito_rm, AC_rm = AC_rm, RP_rm = RP_rm, RPLS_rm = RPLS_rm, MIR_rm = MIR_rm, ATP_rm = ATP_rm, IGXV_rm = IGXV_rm)
   }
   message("MK_toMMs done !!!", MK_time())
 }
@@ -1521,4 +1521,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-19 16:34.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-19 16:40.")
