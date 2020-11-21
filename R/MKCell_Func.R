@@ -981,7 +981,7 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
     install.packages("WGCNA")
   }
   suppressMessages(library(WGCNA))
-  if(nGene > 11000){stop("Sorry Memory Size Crush when nGene over 11000.")}
+  if(nGene > 14000){stop("Sorry Memory Size Crush when nGene over 14000.")}
 
   ## Filt virable genes ##
   if(nGene < nrow(x)){
@@ -996,13 +996,13 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
   rm(gsg)
 
   ## Estimate power ##
-  sft = pickSoftThreshold(x, blockSize = 12000)
+  sft = pickSoftThreshold(x, blockSize = 15000)
   okpower = sft$powerEstimate
   rm(sft)
   if(is.na(okpower)){stop("No okpower !")}
 
   ## Make net ##
-  net = blockwiseModules(x, power = okpower, numericLabels = T, saveTOMs = T, saveTOMFileBase = paste(name, "WGTOM"), maxBlockSize = 12000)
+  net = blockwiseModules(x, power = okpower, numericLabels = T, saveTOMs = T, saveTOMFileBase = paste(name, "WGTOM"), maxBlockSize = 15000)
   moduleColors = labels2colors(net$colors)
   geneTree = net$dendrograms[[1]]
   MEs = orderMEs(moduleEigengenes(x, moduleColors)$eigengenes)
@@ -1521,4 +1521,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-19 16:40.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-21 16:44.")
