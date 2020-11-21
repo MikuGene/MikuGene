@@ -8,7 +8,7 @@ MK_scRNA: One-step scRNA-seq data analysis.
 One-step single-cell RNA-seq data analysis based on Seurat v3 and harmony R package.
 }
 \usage{
-MK_scRNA(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T)
+MK_scRNA(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nVar = 2.5, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, MinMem = T, save = T)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
