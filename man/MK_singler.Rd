@@ -39,7 +39,6 @@ Please:
   citation("SingleR")
   citation("celldex")
 }
-}
 \value{
 A vector of cell-type identities.
 }
