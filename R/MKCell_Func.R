@@ -1213,6 +1213,95 @@ MK_Download <- function(x, name = NULL, sleep = 2, outdir = getwd()){
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
+## MK_Cor 8a03a29901b31176e32928321b1349e6 ##
+#
+MK_Cor <- function(x, y, method = "all", p_cut = 0.01, adj = T, name = NULL, Save = T){
+  if(is.null(name)){name = "temp"}
+  name = as.character(name)
+  # check dim #
+  if(is.null(dim(x))){x = t(data.frame(x))}
+  if(is.null(dim(y))){y = t(data.frame(y))}
+  if(method == "all"){
+    Corlist = matrix(0, nrow(y)*nrow(x),8)
+    e = 0
+    # loop #
+    for(j in 1:nrow(x)){
+      for(i in 1:nrow(y)){
+        e = e + 1
+        Corlist[e,1] = rownames(x)[j]
+        Corlist[e,2] = rownames(y)[i]
+        # Pearson #
+        cor = cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = "pearson", alternative="two.sided")
+        Corlist[e,3] = as.numeric(cor[4])
+        Corlist[e,4] = as.numeric(cor$p.value)
+        rm(cor)
+        # Spearman #
+        cor = cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = "spearman", alternative="two.sided")
+        Corlist[e,6] = as.numeric(cor[4])
+        Corlist[e,7] = as.numeric(cor$p.value)
+        rm(cor)
+      }
+    }
+    Corlist[,5] = p.adjust(Corlist[,4], method="BH")
+    Corlist[,8] = p.adjust(Corlist[,7], method="BH")
+    Corlist = data.frame(Corlist)
+    colnames(Corlist) <- c("Mainname", "Corname", "Cor_p", "P_value_p", "P_adj_p",
+                           "Cor_s", "P_value_s", "P_adj_s")
+    Corlist = Corlist[order(Corlist$P_adj),]
+    Corlist$Sig = "No"
+    if(adj){
+      Corlist$Sig[as.numeric(Corlist$P_adj) < p_cut] = "Yes"
+    }else{
+      Corlist$Sig[as.numeric(Corlist$P_value) < p_cut] = "Yes"
+    }
+    Corlist$State = "None"
+    Corlist$State[as.numeric(Corlist$Cor) > 0] = "pos"
+    Corlist$State[as.numeric(Corlist$Cor) < 0] = "neg"
+    if(Save){
+      dir.create("backup")
+      write.csv(Corlist, paste0(name, "_cor", MK_time(), ".csv"), row.names = F)
+    }
+    return(Corlist)
+  }else{
+    # Method # 
+      Corlist = matrix(0, nrow(y)*nrow(x),5)
+      e = 0
+      # loop #
+      for(j in 1:nrow(x)){
+        for(i in 1:nrow(y)){
+          e = e + 1
+          Corlist[e,1] = rownames(x)[j]
+          Corlist[e,2] = rownames(y)[i]
+          # method #
+          cor = cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = method, alternative="two.sided")
+          Corlist[e,3] = as.numeric(cor[4])
+          Corlist[e,4] = as.numeric(cor$p.value)
+          rm(cor)
+        }
+      }
+    Corlist[,5] = p.adjust(Corlist[,4], method="BH")
+    Corlist = data.frame(Corlist)
+    colnames(Corlist) = c("Mainname","Corname","Cor","P_value","P_adj")
+    Corlist = Corlist[order(Corlist$P_adj),]
+    Corlist$Sig = "No"
+    if(adj){
+      Corlist$Sig[as.numeric(Corlist$P_adj) < p_cut] = "Yes"
+    }else{
+      Corlist$Sig[as.numeric(Corlist$P_value) < p_cut] = "Yes"
+    }
+    Corlist$State = "None"
+    Corlist$State[as.numeric(Corlist$Cor) > 0] = "pos"
+    Corlist$State[as.numeric(Corlist$Cor) < 0] = "neg"
+    if(Save){
+      dir.create("backup")
+      write.csv(Corlist, paste0(name, "_cor", MK_time(), ".csv"), row.names = F)
+    }
+    return(Corlist)
+  }
+}
+#
+## 8a03a29901b31176e32928321b1349e6
+
 ## MK_Microbiology 8a03a29901b31176e32928321b1349e6 ##
 #
 MK_BuildVirusRef <- function(version = "2020.3", OutVs = "default", verbose = T){
@@ -1521,4 +1610,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-21 16:44.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-22 16:02.")
