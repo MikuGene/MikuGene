@@ -35,14 +35,9 @@ Automatically create a backup folder under the working path, and store a name_co
 }
 }
 \details{
-A data-frame contains correlation analysis results.
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+A data-frame contains correlation analysis results.
 }
 \references{
 %% ~put references to the literature/web site here ~
