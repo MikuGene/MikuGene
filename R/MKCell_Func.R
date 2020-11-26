@@ -462,7 +462,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
         for (i in 1:floor(ncol(Temp)/(Sp*500))) {
           a = (i-1)*(Sp*500) +1
           z = i*(Sp*500)
-          message("Dealing -[0-9]$ : ", a, " to ", z, MK_time())
+          if(verbose){message("Dealing -[0-9]$ : ", a, " to ", z, MK_time())}
           Temp1 = Temp[,a:z]
           Temp1$RowName = gsub("-[0-9]$", "", RowN)
           Temp1 = Temp1 %>% group_by(RowName) %>% summarise_all(list(median)) %>% data.frame
@@ -474,7 +474,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
       }
       if(ncol(Temp) %% (Sp*500) != 0){
         a = (i-1)*(Sp*500) +1
-        message("Dealing -[0-9]$ : ", a, " to ", ncol(Temp), MK_time())
+        if(verbose){message("Dealing -[0-9]$ : ", a, " to ", ncol(Temp), MK_time())}
         Temp1 = Temp[,a:ncol(Temp)]
         Temp1$RowName = gsub("-[0-9]$", "", RowN)
         Temp1 = Temp1 %>% group_by(RowName) %>% summarise_all(list(median)) %>% data.frame
@@ -909,7 +909,7 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
 
 ## MK_toMMs 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T){
+MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T, MiniFname = T){
   name = as.character(name)
   dir.create(name)
 
@@ -918,7 +918,7 @@ MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_
   if(ncol(x) >= (Cells*1000)){
     for (i in 1:floor(ncol(x)/(Cells*1000))) {
       message("Save MM ", i, MK_time())
-      MK_toMM(x[, ((i-1)*(Cells*1000)+1):(i*(Cells*1000))], name = paste0(name, "/", name, " ", i), verbose = verbose,
+      MK_toMM(x[, ((i-1)*(Cells*1000)+1):(i*(Cells*1000))], name = paste0(name, "/", name, " ", i), verbose = verbose, MiniFname = MiniFname,
               HK_bm = HK_bm, Mito_rm = Mito_rm, AC_rm = AC_rm, RP_rm = RP_rm, RPLS_rm = RPLS_rm, MIR_rm = MIR_rm, ATP_rm = ATP_rm, IGXV_rm = IGXV_rm)
     }
     i = i + 1
@@ -927,7 +927,7 @@ MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_
   ## remain ##
   if(ncol(x) %% (Cells*1000) != 0){
     message("Save MM ex ", i, MK_time())
-    MK_toMM(x[, ((i-1)*(Cells*1000)+1):ncol(x)], name = paste0(name, "/", name, " ", i), verbose = verbose,
+    MK_toMM(x[, ((i-1)*(Cells*1000)+1):ncol(x)], name = paste0(name, "/", name, " ", i), verbose = verbose, MiniFname = MiniFname,
             HK_bm = HK_bm, Mito_rm = Mito_rm, AC_rm = AC_rm, RP_rm = RP_rm, RPLS_rm = RPLS_rm, MIR_rm = MIR_rm, ATP_rm = ATP_rm, IGXV_rm = IGXV_rm)
   }
   message("MK_toMMs done !!!", MK_time())
@@ -1662,4 +1662,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-26 16:16.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-26 16:19.")
