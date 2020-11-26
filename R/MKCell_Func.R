@@ -331,8 +331,8 @@ MK_fix <- function(x,Fix){
 
 ## MK_toMM 8a03a29901b31176e32928321b1349e6
 #
-MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T, verbose = F, name = "temp"){
-
+MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T, MiniFname = T, Sp = 1, verbose = F, name = "temp"){
+  
   # Change sign #
   if(verbose){
     print(grep("\\.", rownames(x), value = T)[1:6])
@@ -348,11 +348,11 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
     x = rbind(x[-a,], JCHAIN)
     rm(a, JCHAIN)
   }
-
+  
   # Rm MT #
   if(Mito_rm){
-  
-  # MT-, MTATP, MTRNR, MTND, MTCO, MTCYB, MTT #
+    
+    # MT-, MTATP, MTRNR, MTND, MTCO, MTCYB, MTT #
     if(verbose){
       message("Removing MT-; MTATP; MTRNR; MTND; MTCO; MTCYB; MTT ...", MK_time())
       print(grep("^MT-", rownames(x), value = T)[1:6])
@@ -363,15 +363,15 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
       print(grep("^MTCYB", rownames(x), value = T)[1:6])
       print(grep("^MTT", rownames(x), value = T)[1:6])
     }
-  x = x[!grepl("^MT-", rownames(x)),]
-  x = x[!grepl("^MTATP", rownames(x)),]
-  x = x[!grepl("^MTRNR", rownames(x)),]
-  x = x[!grepl("^MTND", rownames(x)),]
-  x = x[!grepl("^MTCO", rownames(x)),]
-  x = x[!grepl("^MTCYB", rownames(x)),]
-  x = x[!grepl("^MTT", rownames(x)),]
+    x = x[!grepl("^MT-", rownames(x)),]
+    x = x[!grepl("^MTATP", rownames(x)),]
+    x = x[!grepl("^MTRNR", rownames(x)),]
+    x = x[!grepl("^MTND", rownames(x)),]
+    x = x[!grepl("^MTCO", rownames(x)),]
+    x = x[!grepl("^MTCYB", rownames(x)),]
+    x = x[!grepl("^MTT", rownames(x)),]
   }
-
+  
   # Rm AC #
   if(AC_rm){
     if(verbose){
@@ -396,7 +396,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
     x = x[!grepl("-IT", rownames(x)),]
     x = x[!grepl("-OT", rownames(x)),]
   }
-
+  
   # Rm RP #
   if(RP_rm){
     if(verbose){
@@ -411,7 +411,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
     x = x[!grepl("^AP[0-9][0-9][0-9]", rownames(x)),]
     x = x[!grepl("^ENSG[0-9]", rownames(x)),]
   }
-
+  
   # Rm RPL and RPS #
   if(RPLS_rm){
     message("Removing RPL; RPS ...", MK_time())
@@ -444,38 +444,89 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   
   # Rm 0 #
   x = x[Matrix::rowSums(x) != 0,]
-
+  
+  # Deal -[0-9]$ #
+  if(MiniFname){
+    message("Dealing feature name ...", MK_time())
+    RowN = grep("-[0-9]$", rownames(x), value = T)
+    if(length(RowN) > 0){
+      if(verbose){print(RowN[1:6])}
+      if(!any(installed.packages() %in% "dplyr")){
+        install.packages("dplyr")
+      }
+      suppressMessages(library(dplyr))
+      Temp = data.frame(as.matrix(x[RowN,]))
+      ReTemp = list()
+      i = 1
+      if(ncol(Temp) > (Sp*500)){
+        for (i in 1:floor(ncol(Temp)/(Sp*500))) {
+          a = (i-1)*(Sp*500) +1
+          z = i*(Sp*500)
+          message("Dealing -[0-9]$ : ", a, " to ", z, MK_time())
+          Temp1 = Temp[,a:z]
+          Temp1$RowName = gsub("-[0-9]$", "", RowN)
+          Temp1 = Temp1 %>% group_by(RowName) %>% summarise_all(list(median)) %>% data.frame
+          rownames(Temp1) = Temp1$RowName
+          ReTemp[[i]] = Temp1[, -1]
+          rm(Temp1)
+        }
+        i = i + 1
+      }
+      if(ncol(Temp) %% (Sp*500) != 0){
+        a = (i-1)*(Sp*500) +1
+        message("Dealing -[0-9]$ : ", a, " to ", ncol(Temp), MK_time())
+        Temp1 = Temp[,a:ncol(Temp)]
+        Temp1$RowName = gsub("-[0-9]$", "", RowN)
+        Temp1 = Temp1 %>% group_by(RowName) %>% summarise_all(list(median)) %>% data.frame
+        rownames(Temp1) = Temp1$RowName
+        ReTemp[[i]] = Temp1[, -1]
+        rm(Temp1)
+      }
+      Temp = as.matrix(do.call(cbind, ReTemp))
+      rm(ReTemp)
+      if(any(grepl("dgC", as.character(class(x))))){
+        Temp = as(Temp, "dgCMatrix")
+      }
+      if(any(grepl("dgT", as.character(class(x))))){
+        Temp = as(Temp, "dgTMatrix")
+      }
+      x = x[!rownames(x) %in% RowN,]
+      x = rbind(x, Temp)
+    }
+    rm(RowN)
+  }
+  
   # HK batch remove #
   if(HK_bm){
     if(verbose){print(x[1:7, 1:7])}
-
+    
     # Cell library #
     lib <- apply(x, 2, sum)
-
+    
     # HK genes #
     HKs <- c("CFL1","RPS15A","RPL38","RPL28","FAU","RPL35A","RPL39","RPL23","RPLP2","RPS23")
     HKbm <- x[HKs,]
-
+    
     # Predict with library #
     HKbm <- sweep(HKbm,2,lib,FUN = "/")
     for (i in 1:nrow(HKbm)) {
       if(verbose){print(paste(rownames(HKbm)[i],i,sum(as.numeric(HKbm[i,]) == 0),median(as.numeric(HKbm[i,HKbm[i,] != 0]))))}
-
+      
       # By median #
       HKbm[i,as.numeric(HKbm[i,]) == 0] <- median(as.numeric(HKbm[i,HKbm[i,] != 0]))
-
+      
       if(verbose){print(paste(i,sum(as.numeric(HKbm[i,]) == 0),median(as.numeric(HKbm[i,HKbm[i,] != 0]))))}}
-
+    
     # Focus by mean #
     HKbm <- apply(HKbm, 2, mean)
-
+    
     # Normal matrix #
     x <- sweep(x,2,HKbm/mean(HKbm),FUN = "/")
-
+    
     if(verbose){print(x[1:7,1:7])}
     rm(HKbm,HKs,lib)
     gc()}
-
+  
   # Save by dgTMatrix #
   col = colnames(x)
   row = rownames(x)
@@ -484,13 +535,14 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   }else{
     x = as(as.matrix(x), "dgTMatrix")
   }
-
+  
   write.csv(col, paste0(name, "_cell.csv"))
   write.csv(row, paste0(name, "_gene.csv"))
   Matrix::writeMM(x, paste0(name, "_mt.mtx"))
-
+  
   rm(x)
-  gc()}
+  gc()
+}
 #
 ## 8a03a29901b31176e32928321b1349e6
 
@@ -1610,4 +1662,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-22 16:02.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-26 16:16.")
