@@ -492,6 +492,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
       }
       x = x[!rownames(x) %in% RowN,]
       x = rbind(x, Temp)
+      rm(Temp)
     }
     rm(RowN)
   }
@@ -1662,4 +1663,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-26 16:19.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-26 16:22.")
