@@ -491,6 +491,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
         Temp = as(Temp, "dgTMatrix")
       }
       x = x[!rownames(x) %in% RowN,]
+      colnames(Temp) = colnames(x)
       x = rbind(x, Temp)
       rm(Temp)
     }
@@ -1663,4 +1664,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-26 16:22.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-26 17:34.")
