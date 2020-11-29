@@ -109,4 +109,4 @@ Email 2: 2743623823@qq.com <br>
  <b><i>OUTPUT:</i></b> This function will output the virus-mapping results.<br>
  <br><hr>
 <b><i>6. Data sets:</i></b><br>
-<i><b>1) Cellmarkers:</b> data('Cellmarker', package = 'MikuGene')</i><br>
+<i><b>1) Cellmarkers:</b> processing...</i><br>
