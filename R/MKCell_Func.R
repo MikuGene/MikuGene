@@ -639,7 +639,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c
   name = as.character(name)
   
   ## Creat Seurat v3.2 ##
-  x = CreateSeuratObject(x, name, min.features = nGene[1])
+  x = CreateSeuratObject(x, name, min.features = 0)
   if(Plot){
     message("Matrix dim: ", paste(dim(x), collapse = " "), MK_time())
     print(VlnPlot(x, c("nFeature_RNA", "nCount_RNA"), ncol = 2, pt.size = 0.2))
@@ -1664,4 +1664,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-26 17:34.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-29 12:20.")
