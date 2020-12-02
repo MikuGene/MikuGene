@@ -1065,7 +1065,7 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
   gc()
 
   ## Return ##
-  RE = list(x, MEs, moduleColors, okpower, TOM)
+  RE = list(x, MEs, moduleColors, okpower, TOM, geneTree)
 
   if(Save){
     dir.create("backup")
@@ -1664,4 +1664,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-11-29 12:20.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-2 15:53.")
