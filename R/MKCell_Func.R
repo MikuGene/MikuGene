@@ -825,7 +825,7 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
   if(!any(installed.packages() %in% "ggplot2")){
     install.packages("ggplot2")
   }
-  if(!any(installed.packages() %in% "ReactomePA")){
+  if(!any(installed.packages() %in% "org.Hs.eg.db")){
     if(!any(installed.packages() %in% "BiocManager")){
       install.packages("BiocManager")
     }
@@ -1675,4 +1675,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-2 20:25.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-2 20:29.")
