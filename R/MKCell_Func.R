@@ -1059,6 +1059,12 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
   net = blockwiseModules(x, power = okpower, numericLabels = T, saveTOMs = T, saveTOMFileBase = paste(name, "WGTOM"), maxBlockSize = 15000)
   moduleColors = labels2colors(net$colors)
   geneTree = net$dendrograms[[1]]
+  if(Save){
+    plotDendroAndColors(geneTree, moduleColors[net$blockGenes[[1]]], "Module colors",
+                        dendroLabels = FALSE, hang = 0.03, addGuide = TRUE, guideHang = 0.05)
+    scan()
+  }
+  
   MEs = orderMEs(moduleEigengenes(x, moduleColors)$eigengenes)
   rm(net)
   load(grep(paste(name, "WGTOM"), list.files(), value = T))
@@ -1664,4 +1670,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-2 15:53.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-2 16:00.")
