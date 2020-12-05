@@ -21,6 +21,32 @@ if(!any(installed.packages() %in% "Matrix")){
 }
 suppressMessages(library(Matrix))
 
+## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
+MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
+  # Fast model #
+  if(model == "fast"){
+    if(is.null(markers)){
+      data("Cellmarker")
+      if(detail){
+        markers = Cellmarker$Gene
+        names(markers) = Cellmarker$Cell
+      }else{
+        markers = Cellmarker$Gene[Cellmarker$Tree == 1]
+        names(markers) = Cellmarker$Cell[Cellmarker$Tree == 1]
+      }
+    }
+    Cellmark = data.frame(Cell = names(markers), Genes = markers)
+    Cellmark = split(Cellmark$Genes, Cellmark$Cell)
+    CP = lapply(Cellmark, function(i){
+      apply(x[intersect(rownames(x), i), , drop = F], 2, mean, na.rm = T)
+    })
+    CP = do.call(cbind, CP)
+    return(CP)
+  }
+}
+#
+## 8a03a29901b31176e32928321b1349e6 ##
+
 ## MK_Tree 8a03a29901b31176e32928321b1349e6 ##
 #
 MK_Tree <- function(Bulk,Sigl,Cluster,SuClust,SuType = c("Cancer cell","Immune cell")){
@@ -1675,4 +1701,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-2 20:29.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-5 20:29.")
