@@ -41,7 +41,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
     CP = lapply(Cellmark, function(i){
       apply(x[intersect(rownames(x), i), , drop = F], 2, mean, na.rm = T)
     })
-    CP = do.call(cbind, CP)
+    CP = data.frame(do.call(cbind, CP))
     return(CP)
   }
 }
@@ -1704,4 +1704,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-6 12:10.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-06 14:08.")
