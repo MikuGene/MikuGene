@@ -1239,7 +1239,7 @@ MK_asNum = function(x, nsep = 5, verbose = T){
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
-## MK_Exct 8a03a29901b31176e32928321b1349e6 ##
+## MK_Functions 8a03a29901b31176e32928321b1349e6 ##
 #
 MK_Exct <- function(x, filed = 1, exct = "\\|", verbose = F){
   if(verbose){message("Before: ", x[1], MK_time())}
@@ -1247,6 +1247,8 @@ MK_Exct <- function(x, filed = 1, exct = "\\|", verbose = F){
   if(verbose){message("After: ", x[1], MK_time())}
   return(x)
 }
+#
+MK_FPKMtoTPM <- function(x){exp(log(x) - log(sum(x)) + log(1e6))}    
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
@@ -1701,4 +1703,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-5 20:29.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-6 11:21.")
