@@ -26,7 +26,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
   # Fast model #
   if(model == "fast"){
     if(is.null(markers)){
-      data("Cellmarker")
+      data("Cellmarker", envir = environment())
       if(detail){
         markers = Cellmarker$Gene
         names(markers) = Cellmarker$Cell
@@ -1704,4 +1704,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-06 14:08.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-06 15:03.")
