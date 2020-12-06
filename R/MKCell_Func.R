@@ -36,6 +36,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
       }
     }
     Cellmark = data.frame(Cell = names(markers), Genes = markers)
+    Cellmark = Cellmark[Cellmark$Genes %in% rownames(x),]
     Cellmark = split(Cellmark$Genes, Cellmark$Cell)
     CP = lapply(Cellmark, function(i){
       apply(x[intersect(rownames(x), i), , drop = F], 2, mean, na.rm = T)
@@ -1703,4 +1704,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-6 11:21.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-6 12:10.")
