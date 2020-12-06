@@ -41,7 +41,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
     CP = lapply(Cellmark, function(i){
       apply(x[intersect(rownames(x), i), , drop = F], 2, mean, na.rm = T)
     })
-    CP = data.frame(do.call(cbind, CP))
+    CP = do.call(cbind, CP)
     return(CP)
   }
 }
