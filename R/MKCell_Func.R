@@ -47,7 +47,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
 }
 #
 MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
-  library(Matrix)
+
   # Remove NA #
   Sigl = Sigl[, !is.na(Cluster)]
   Cluster = Cluster[!is.na(Cluster)]
@@ -61,7 +61,7 @@ MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
     #
     Si = MK_rem0(Si, Rem0 = 0.7)
     Met1 = Matrix::colSums(Si)
-    Si = t(t(Si)/Met1)
+    Si = Matrix::t(Matrix::t(Si)/Met1)
     #
     Abud = Matrix::rowMeans(Si)
     Vari = apply(Si, 1, var)
