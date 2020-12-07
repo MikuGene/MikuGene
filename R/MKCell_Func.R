@@ -46,6 +46,52 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
   }
 }
 #
+MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
+  # Remove NA #
+  Sigl = Sigl[, !is.na(Cluster)]
+  Cluster = Cluster[!is.na(Cluster)]
+  # Cell TYPE #
+  Type = unique(Cluster)
+  DsigAll = list()
+  # i #
+  for (i in 1:length(Type)) {
+    message("Processing: ", Type[i], MK_time())
+    Si = Sigl[, which(Cluster == Type[i])]
+    #
+    Si = Si[Matrix::rowSums(Si) != 0,]
+    Met1 = Matrix::colSums(Si)
+    Si = t(t(Si)/Met1)
+    #
+    Abud = Matrix::rowMeans(Si)
+    Vari = apply(Si, 1, var)
+    Libr = mean(Met1)
+    Dsig = Abud * Libr
+    DsigAll[[i]] = list(Dsig, Vari, Libr)
+    rm(Met1, Si, Abud, Vari, Libr, Dsig)
+    gc()
+  }
+  # Make Dsig, Vari and Libr #
+  message("Merging Dsigs ...", MK_time())
+  Dsig = data.frame()
+  Vari = data.frame()
+  Libr = c()
+  for (i in 1:length(Type)) {
+    Dsigi = data.frame(DsigAll[[i]][[1]])
+    Varii = data.frame(DsigAll[[i]][[2]])
+    Libr[i] = DsigAll[[i]][[3]]
+    Dsig = MK_cbind_s(Dsig, Dsigi)
+    Vari = MK_cbind_s(Vari, Varii)
+    rm(Dsigi, Varii)
+    colnames(Dsig)[i] = Type[i]
+    colnames(Vari)[i] = Type[i]
+    names(Libr)[i] = Type[i]
+  }
+  rm(DsigAll)
+  Dsig = list(Dsig, Vari, Libr)
+  rm(Vari, Libr)
+  # Re #
+  return(Dsig)
+}
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_Tree 8a03a29901b31176e32928321b1349e6 ##
@@ -1704,4 +1750,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-06 15:03.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-07 13:52.")
