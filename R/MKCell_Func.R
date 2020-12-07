@@ -1087,15 +1087,11 @@ MK_DEGplot <- function(x,Title = "temp",pvalue = 0.01,log2FC = 2,plimit = 30,log
 
 ## MK_rem0 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_rem0 <- function(x, Rem0 = 0.1, raito = T, MKrcpp = F){
-  if(MKrcpp){
-    Mat = MK_asMatr(x)
-  }else{
-    Mat = as.matrix(x)
-  }
-  Mat = apply(Mat, 2, as.numeric)
+MK_rem0 <- function(x, Rem0 = 0.1, raito = T, sep = 5){
+  Mat = MK_asNum(x, sep = sep)
   r = apply(Mat, 1, function(i) sum(i == 0))
-  if(raito){ok = which(r <= dim(Mat)[2]*Rem0)
+  if(raito){
+    ok = which(r <= dim(Mat)[2]*Rem0)
   }else{
     ok = which(r <= Rem0)
   }
@@ -1751,4 +1747,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-07 16:34.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-07 19:34.")
