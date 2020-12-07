@@ -47,6 +47,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
 }
 #
 MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
+  library(Matrix)
   # Remove NA #
   Sigl = Sigl[, !is.na(Cluster)]
   Cluster = Cluster[!is.na(Cluster)]
@@ -58,7 +59,7 @@ MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
     message("Processing: ", Type[i], MK_time())
     Si = Sigl[, which(Cluster == Type[i])]
     #
-    Si = Si[Matrix::rowSums(Si) != 0,]
+    Si = MK_rem0(Si, Rem0 = 0.7)
     Met1 = Matrix::colSums(Si)
     Si = t(t(Si)/Met1)
     #
@@ -583,7 +584,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
     HKbm <- x[HKs,]
     
     # Predict with library #
-    HKbm <- sweep(HKbm,2,lib,FUN = "/")
+    HKbm <- sweep(HKbm, 2, lib, FUN = "/")
     for (i in 1:nrow(HKbm)) {
       if(verbose){print(paste(rownames(HKbm)[i],i,sum(as.numeric(HKbm[i,]) == 0),median(as.numeric(HKbm[i,HKbm[i,] != 0]))))}
       
@@ -1098,7 +1099,7 @@ MK_rem0 <- function(x, Rem0 = 0.1, raito = T, MKrcpp = F){
   }else{
     ok = which(r <= Rem0)
   }
-  rm(r)
+  rm(r, Mat)
   x = x[ok,]
   rm(ok)
   return(x)
@@ -1750,4 +1751,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-07 13:52.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-07 16:34.")
