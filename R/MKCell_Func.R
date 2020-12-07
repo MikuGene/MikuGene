@@ -1240,15 +1240,13 @@ MK_asNum = function(x, nsep = 5, verbose = T){
 
   ## check ncol ##
   if(ncol(x) < nsep*3){
-
     x = apply(x, 2, as.numeric)
     colnames(x) = coln
-
     return(x)
   }
 
   ## step ##
-  sp = floor(ncol(x)/nsep)
+  sp = floor(ncol(x) / nsep)
 
   ## seprate ##
   Re = list()
@@ -1256,8 +1254,8 @@ MK_asNum = function(x, nsep = 5, verbose = T){
   for (i in 1:nsep) {
     a = (i-1) * sp + 1
     z = i * sp
-    mt = apply(x[,a:z], 2, as.numeric)
-    Re[[i]] = as(as.matrix(mt), "dgCMatrix")
+    mt = apply(x[, a:z], 2, as.numeric)
+    Re[[i]] = as(mt, "dgCMatrix")
     if(verbose){message("Num: ", a, " to ", z, MK_time())}
     rm(a,z,mt)
   }
@@ -1266,8 +1264,8 @@ MK_asNum = function(x, nsep = 5, verbose = T){
   ## remain ##
   if(ncol(x) %% sp != 0){
     a = (i-1) * sp + 1
-    mt = apply(x[,a:ncol(x)], 2, as.numeric)
-    Re[[i]] = as(as.matrix(mt), "dgCMatrix")
+    mt = apply(x[, a:ncol(x), drop = F], 2, as.numeric)
+    Re[[i]] = as(mt, "dgCMatrix")
     if(verbose){message("Num: ex ", a, " to ", ncol(x), MK_time())}
     rm(a,mt)
   }
@@ -1277,7 +1275,6 @@ MK_asNum = function(x, nsep = 5, verbose = T){
   colnames(Re) = coln
   rownames(Re) = rown
   rm(sp,coln,rown)
-
   return(Re)
 }
 #
@@ -1747,4 +1744,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-07 20:12.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-07 21:47.")
