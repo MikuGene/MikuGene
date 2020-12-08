@@ -29,7 +29,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
   # Fast model #
   if(model == "fast"){
     if(is.null(markers)){
-      data("Cellmarker", envir = environment())
+      data("Cellmarker", envir = environment(), package = "MikuGene")
       if(detail){
         markers = Cellmarker$Gene
         names(markers) = Cellmarker$Cell
@@ -59,7 +59,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
     if(ncol(x) < 2){x = cbind(x, x)}
     # Choose TYPE #
     if(type == "SCC"){
-      data("SccDsig_main", envir = environment())
+      data("SccDsig_main", envir = environment(), package = "MikuGene")
     }   
     # Match #
     Gene = intersect(rownames(Dsig[[1]]), rownames(x))
@@ -90,7 +90,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
     rownames(CP) = colnames(Dsig[[1]])
     colnames(CP) = colnames(x)
     if(detail){
-      data("SccDsig_fine", envir = environment())
+      data("SccDsig_fine", envir = environment(), package = "MikuGene")
     }
     return(CP)
   }
