@@ -44,6 +44,51 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
     CP = do.call(cbind, CP)
     return(CP)
   }
+  # Main model #
+  if(model == "main"){
+    x = data.frame(x)
+    Check0 = apply(x, 2, function(i) sum(i != 0)) > 0
+    if(!all(Check0)){
+      stop(message("!!! Error, Bulk reads all 0 !!!", MK_time()))
+    }
+    x = x[, Check0, drop = F]
+    rm(Check0)
+    if(ncol(x) < 2){x = cbind(x, x)}
+    # Choose TYPE #
+    if(type == "SCC"){
+      data("SccDsig_main", envir = environment())
+    }   
+    # Match #
+    Gene = intersect(rownames(Dsig[[1]]), rownames(x))
+    if(length(Gene) < 0.5*nrow(Dsig[[1]])){
+      message("Lower than 50% common genes !", MK_time())
+    }   
+    Dsign = Dsig[[1]][match(Gene, rownames(Dsig[[1]])),]
+    Varia = Dsig[[2]][match(Gene, rownames(Dsig[[2]])),]
+    x = apply(x[match(Gene, rownames(x)), ], 2, function(i) i/sum(i))
+    rm(Gene)
+    # ReLm #
+    ReLm = list()
+    for(i in 1:ncol(x)){
+      Tag = x[, i] != 0
+      # Dsig, Vari, Bulk #
+      CoDsig = as.matrix(Dsign[Tag, ])
+      CoVari = as.matrix(Varia[Tag, ])
+      CoBulk = x[Tag, i]
+      # scale matrix #
+      CoDsig = (CoDsig - mean(CoDsig)) / sd(CoDsig)
+      CoBulk = (CoBulk - mean(CoBulk)) / sd(CoDsig)
+      # MK_Lm #
+      ReLm[[i]] = MK_Lm(CoDsig, CoBulk, CoVari, Dsig[[3]])
+      rm(Tag, CoDsig, CoBulk, CoVari) + gc()
+    }
+    # CP #
+    CP = sapply(ReLm, function(i) i$x / sum(i$x))
+    rownames(CP) = colnames(Dsig[[1]])
+    colnames(CP) = colnames(x)
+    if(detail){}
+    return(CP)
+  }
 }
 #
 MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
@@ -1744,4 +1789,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-07 21:47.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 15:20.")
