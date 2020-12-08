@@ -111,7 +111,7 @@ MKCell_MakeDsig = function (Sigl, Cluster){
     Si = MK_rem0(Si, Rem0 = 0.3)
     data("Cellmarker", envir = environment(), package = "MikuGene")
     # Rem state gene #
-    Si = Si[!rownames(Si) %in% Cellmarker$Gene[grep("sore", Cellmarker$Cell)],]
+    Si = Si[!rownames(Si) %in% Cellmarker$Gene[grep("score", Cellmarker$Cell)],]
     Mark = rownames(Si)[rownames(Si) %in% Cellmarker$Gene]
     message("Some markers: ", paste(Mark, collapse = " "))
     rm(Cellmarker, Mark)
