@@ -23,6 +23,9 @@ suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
 MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
+  # Preparation #
+  if(is.null(type)){type = "SCC"}
+  type = as.character(type)
   # Fast model #
   if(model == "fast"){
     if(is.null(markers)){
@@ -86,7 +89,9 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
     CP = sapply(ReLm, function(i) i$x / sum(i$x))
     rownames(CP) = colnames(Dsig[[1]])
     colnames(CP) = colnames(x)
-    if(detail){}
+    if(detail){
+      data("SccDsig_fine", envir = environment())
+    }
     return(CP)
   }
 }
