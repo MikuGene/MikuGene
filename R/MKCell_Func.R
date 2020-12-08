@@ -120,9 +120,9 @@ MKCell_MakeDsig = function (Sigl, Cluster){
     message("Some markers: ", paste(Mark, collapse = " "))
     rm(Mark)
     # Insert median to 0 #
-    Si = apply(Si, 1, function(i){
+    Si = t(apply(Si, 1, function(i){
       ifelse(i == 0, median(i[i != 0]), i)
-    })
+    }))
     # Make Dsig #
     Met1 = Matrix::colSums(Si)
     Si = Matrix::t(Matrix::t(Si)/Met1)
@@ -1801,4 +1801,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 20:08.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 20:25.")
