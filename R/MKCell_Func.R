@@ -1283,24 +1283,20 @@ MK_WG_CliIn <- function(Clin,WG_Tom,name = "temp",color = "ALL",classname = "ALL
 ## MK_asNum 8a03a29901b31176e32928321b1349e6 ##
 #
 MK_asNum = function(x, nsep = 5, verbose = T){
-
-  ## save names ##
+  library(Matrix)
+  # save names #
   coln = colnames(x)
   rown = rownames(x)
-
-  ## check ncol ##
+  # check ncol #
   if(ncol(x) < nsep*3){
     x = apply(x, 2, as.numeric)
     colnames(x) = coln
     return(x)
   }
-
-  ## step ##
+  # step #
   sp = floor(ncol(x) / nsep)
-
-  ## seprate ##
+  # seprate #
   Re = list()
-
   for (i in 1:nsep) {
     a = (i-1) * sp + 1
     z = i * sp
@@ -1310,8 +1306,7 @@ MK_asNum = function(x, nsep = 5, verbose = T){
     rm(a,z,mt)
   }
   i = i + 1
-
-  ## remain ##
+  # remain #
   if(ncol(x) %% sp != 0){
     a = (i-1) * sp + 1
     mt = apply(x[, a:ncol(x), drop = F], 2, as.numeric)
@@ -1319,8 +1314,7 @@ MK_asNum = function(x, nsep = 5, verbose = T){
     if(verbose){message("Num: ex ", a, " to ", ncol(x), MK_time())}
     rm(a,mt)
   }
-
-  ## cbind ##
+  # cbind #
   Re = do.call(cbind, Re)
   colnames(Re) = coln
   rownames(Re) = rown
@@ -1794,4 +1788,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 15:20.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 16:48.")
