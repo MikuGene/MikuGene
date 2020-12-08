@@ -63,12 +63,12 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
       data("SccDsig_main", envir = environment(), package = "MikuGene")
     }   
     # Match #
-    Gene = intersect(rownames(Dsig[[1]]), rownames(x))
-    if(length(Gene) < 0.5*nrow(Dsig[[1]])){
+    Gene = intersect(rownames(SCC_Dsig[[1]]), rownames(x))
+    if(length(Gene) < 0.5*nrow(SCC_Dsig[[1]])){
       message("Lower than 50% common genes !", MK_time())
     }   
-    Dsign = Dsig[[1]][match(Gene, rownames(Dsig[[1]])),]
-    Varia = Dsig[[2]][match(Gene, rownames(Dsig[[2]])),]
+    Dsign = SCC_Dsig[[1]][match(Gene, rownames(SCC_Dsig[[1]])),]
+    Varia = SCC_Dsig[[2]][match(Gene, rownames(SCC_Dsig[[2]])),]
     x = apply(x[match(Gene, rownames(x)), ], 2, function(i) i/sum(i))
     rm(Gene)
     # ReLm #
@@ -1801,4 +1801,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 18:08.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 20:08.")
