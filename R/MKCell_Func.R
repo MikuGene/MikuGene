@@ -101,6 +101,13 @@ MKCell_MakeDsig = function (Sigl, Cluster){
   # Rem NA #
   Sigl = Sigl[, !is.na(Cluster)]
   Cluster = Cluster[!is.na(Cluster)]
+  # Rem state gene #
+  Sigl = Sigl[!grepl("^HSP", rownames(Sigl)),]
+  Sigl = Sigl[!grepl("^CENP", rownames(Sigl)),]
+  Sigl = Sigl[!grepl("^DNAJ", rownames(Sigl)),]
+  data("Cellmarker", envir = environment(), package = "MikuGene")
+  Si = Si[!rownames(Si) %in% Cellmarker$Gene[grep("score", Cellmarker$Cell)],]
+  # Type #
   Type = unique(Cluster)
   DsigAll = list()
   # Each Type #
@@ -110,8 +117,6 @@ MKCell_MakeDsig = function (Sigl, Cluster){
     # Rem 70% non-expr #
     Si = MK_rem0(Si, Rem0 = 0.3)
     data("Cellmarker", envir = environment(), package = "MikuGene")
-    # Rem state gene #
-    Si = Si[!rownames(Si) %in% Cellmarker$Gene[grep("score", Cellmarker$Cell)],]
     Mark = rownames(Si)[rownames(Si) %in% Cellmarker$Gene]
     message("Some markers: ", paste(Mark, collapse = " "))
     rm(Cellmarker, Mark)
@@ -1797,4 +1802,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 17:12.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 18:03.")
