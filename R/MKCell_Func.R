@@ -4,7 +4,7 @@
 MKrcpp = F
 MKtime = T
 
-MK_time <- function(){
+MK_time = function(){
   mtime = gsub(" ", "", gsub(":", "", date()))
   mtime = sub("^...", " ", mtime)
   if(!MKtime){mtime = NULL}
@@ -22,6 +22,7 @@ if(!any(installed.packages() %in% "Matrix")){
 suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
+#
 MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
   # Preparation #
   if(is.null(type)){type = "SCC"}
@@ -96,23 +97,29 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
   }
 }
 #
-MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
-
-  # Remove NA #
+MKCell_MakeDsig = function (Sigl, Cluster){
+  # Rem NA #
   Sigl = Sigl[, !is.na(Cluster)]
   Cluster = Cluster[!is.na(Cluster)]
-  # Cell TYPE #
   Type = unique(Cluster)
   DsigAll = list()
-  # i #
+  # Each Type #
   for (i in 1:length(Type)) {
     message("Processing: ", Type[i], MK_time())
     Si = Sigl[, which(Cluster == Type[i])]
-    #
-    Si = MK_rem0(Si, Rem0 = 0.7)
+    # Rem 70% non-expr #
+    Si = MK_rem0(Si, Rem0 = 0.3)
+    data("Cellmarker", envir = environment(), package = "MikuGene")
+    Mark = rownames(Si)[rownames(Si) %in% Cellmarker$Gene]
+    message("Some markers: ", paste(Mark, collapse = " "))
+    rm(Cellmarker, Mark)
+    # Insert median to 0 #
+    Si = apply(Si, 1, function(i){
+      ifelse(i == 0, median(i[i != 0]), i)
+    })
+    # Make Dsig #
     Met1 = Matrix::colSums(Si)
     Si = Matrix::t(Matrix::t(Si)/Met1)
-    #
     Abud = Matrix::rowMeans(Si)
     Vari = apply(Si, 1, var)
     Libr = mean(Met1)
@@ -121,7 +128,7 @@ MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
     rm(Met1, Si, Abud, Vari, Libr, Dsig)
     gc()
   }
-  # Make Dsig, Vari and Libr #
+  # Merge #
   message("Merging Dsigs ...", MK_time())
   Dsig = data.frame()
   Vari = data.frame()
@@ -140,9 +147,9 @@ MKCell_MakeDsig = function(Sigl, Cluster, Batch = NULL){
   rm(DsigAll)
   Dsig = list(Dsig, Vari, Libr)
   rm(Vari, Libr)
-  # Re #
   return(Dsig)
 }
+#
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_Tree 8a03a29901b31176e32928321b1349e6 ##
@@ -1788,4 +1795,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 16:48.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 16:33.")
