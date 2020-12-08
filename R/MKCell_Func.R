@@ -110,6 +110,8 @@ MKCell_MakeDsig = function (Sigl, Cluster){
     # Rem 70% non-expr #
     Si = MK_rem0(Si, Rem0 = 0.3)
     data("Cellmarker", envir = environment(), package = "MikuGene")
+    # Rem state gene #
+    Si = Si[!rownames(Si) %in% Cellmarker$Gene[grep("sore", Cellmarker$Cell)],]
     Mark = rownames(Si)[rownames(Si) %in% Cellmarker$Gene]
     message("Some markers: ", paste(Mark, collapse = " "))
     rm(Cellmarker, Mark)
@@ -1795,4 +1797,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 16:33.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 17:12.")
