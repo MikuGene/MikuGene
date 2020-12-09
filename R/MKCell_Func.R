@@ -83,7 +83,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
       CoDsig = (CoDsig - mean(CoDsig)) / sd(CoDsig)
       CoBulk = (CoBulk - mean(CoBulk)) / sd(CoDsig)
       # MK_Lm #
-      ReLm[[i]] = MK_Lm(CoDsig, CoBulk, CoVari, Dsig[[3]])
+      ReLm[[i]] = MK_Lm(CoDsig, CoBulk, CoVari, SCC_Dsig[[3]])
       rm(Tag, CoDsig, CoBulk, CoVari) + gc()
     }
     # CP #
