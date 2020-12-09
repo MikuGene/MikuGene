@@ -88,7 +88,7 @@ MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
     }
     # CP #
     CP = sapply(ReLm, function(i) i$x / sum(i$x))
-    rownames(CP) = colnames(Dsig[[1]])
+    rownames(CP) = colnames(SCC_Dsig[[1]])
     colnames(CP) = colnames(x)
     if(detail){
       data("SccDsig_fine", envir = environment(), package = "MikuGene")
@@ -1801,4 +1801,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-08 20:25.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-09 11:49.")
