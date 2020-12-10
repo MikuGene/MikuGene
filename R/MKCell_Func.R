@@ -110,19 +110,11 @@ MKCell_MakeDsig = function (Sigl, Cluster){
   # Type #
   Type = unique(Cluster)
   DsigAll = list()
-  # Each Type #
   for (i in 1:length(Type)) {
     message("Processing: ", Type[i], MK_time())
     Si = Sigl[, which(Cluster == Type[i])]
     # Rem 70% non-expr #
-    Si = MK_rem0(Si, Rem0 = 0.3)
-    Mark = rownames(Si)[rownames(Si) %in% Cellmarker$Gene]
-    message("Some markers: ", paste(Mark, collapse = " "))
-    rm(Mark)
-    # Insert median to 0 #
-    Si = t(apply(Si, 1, function(i){
-      ifelse(i == 0, median(i[i != 0]), i)
-    }))
+    Si = MK_rem0(Si, Rem0 = 0.7)
     # Make Dsig #
     Met1 = Matrix::colSums(Si)
     Si = Matrix::t(Matrix::t(Si)/Met1)
@@ -1801,4 +1793,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-09 11:49.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-10 11:09.")
