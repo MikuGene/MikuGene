@@ -23,8 +23,9 @@ suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
 #
-MKCell = function(x, model = "fast", detail = T, markers = NULL, type = NULL){
+MKCell = function(x, model = "fast", detail = T, ifFPKM = F, markers = NULL, type = NULL){
   # Preparation #
+  if(ifFPKM){x = MK_FPKMtoTPM(x)}
   if(is.null(type)){type = "SCC"}
   type = as.character(type)
   # Fast model #
@@ -1793,4 +1794,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-10 11:09.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-10 15:15.")
