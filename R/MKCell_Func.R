@@ -23,7 +23,7 @@ suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
 #
-MKCell = function(x, model = "fast", detail = T, ifFPKM = F, markers = NULL, type = NULL){
+MKCell = function(x, model = "fast", detail = T, ifFPKM = F, scale = F, markers = NULL, type = NULL){
   # Preparation #
   if(ifFPKM){x = MK_FPKMtoTPM(x)}
   if(is.null(type)){type = "SCC"}
@@ -47,6 +47,9 @@ MKCell = function(x, model = "fast", detail = T, ifFPKM = F, markers = NULL, typ
       apply(x[intersect(rownames(x), i), , drop = F], 2, mean, na.rm = T)
     })
     CP = do.call(cbind, CP)
+    if(scale){
+      CP = t(apply(CP, 2, function(i) (i - min(i))/(max(i) - min(i))))
+    }
     return(CP)
   }
   # Main model #
