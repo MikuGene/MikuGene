@@ -117,8 +117,8 @@ MKCell_MakeDsig = function (Sigl, Cluster){
   for (i in 1:length(Type)) {
     message("Processing: ", Type[i], MK_time())
     Si = Sigl[, which(Cluster == Type[i])]
-    # Rem 70% non-expr #
-    Si = MK_rem0(Si, Rem0 = 0.7)
+    # Rem 50% non-expr #
+    Si = MK_rem0(Si, Rem0 = 0.5)
     # Make Dsig #
     Met1 = Matrix::colSums(Si)
     Si = Matrix::t(Matrix::t(Si)/Met1)
@@ -1797,4 +1797,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-10 15:15.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-11 19:11.")
