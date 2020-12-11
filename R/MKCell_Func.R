@@ -48,7 +48,7 @@ MKCell = function(x, model = "fast", detail = T, ifFPKM = F, scale = F, markers 
     })
     CP = do.call(cbind, CP)
     if(scale){
-      CP = t(apply(CP, 2, function(i) (i - min(i))/(max(i) - min(i))))
+      CP = apply(CP, 2, function(i) (i - min(i))/(max(i) - min(i)))
     }
     return(CP)
   }
@@ -1797,4 +1797,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-11 19:11.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-11 20:08.")
