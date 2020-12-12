@@ -23,13 +23,13 @@ suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
 #
-MKCell = function(x, model = "fast", detail = T, ifFPKM = F, scale = F, markers = NULL, type = NULL){
+MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, scale = F, markers = NULL, type = NULL){
   # Preparation #
   if(ifFPKM){x = MK_FPKMtoTPM(x)}
   if(is.null(type)){type = "SCC"}
   type = as.character(type)
   # Fast model #
-  if(model == "fast"){
+  if(model == "Extra"){
     if(is.null(markers)){
       data("Cellmarker", envir = environment(), package = "MikuGene")
       if(detail){
@@ -53,7 +53,7 @@ MKCell = function(x, model = "fast", detail = T, ifFPKM = F, scale = F, markers 
     return(CP)
   }
   # Main model #
-  if(model == "main"){
+  if(model == "Intra"){
     x = data.frame(x)
     Check0 = apply(x, 2, function(i) sum(i != 0)) > 0
     if(!all(Check0)){
@@ -850,7 +850,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c
 
 ## MK_singler 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10, name = NULL, Save = T){
+MK_singler = function(x, Ref = c("HPCA", "BPED", "DICE")[1], mode = c("main", "fine")[1], cluster = NULL, Cells = 10, name = NULL, Save = T){
   
   if(is.null(name)){name = "temp"}
   name = as.character(name)
@@ -910,34 +910,6 @@ MK_singler = function(x, Ref = "HPCA", mode = "main", cluster = NULL, Cells = 10
 }
 #
 ## 8a03a29901b31176e32928321b1349e6 ##            
-                   
-## MK_clear 8a03a29901b31176e32928321b1349e6 ##
-#
-MK_clear <- function(x,name = "temp",Save = T){
-  library(Seurat)
-
-  ## Main data ##
-  DataB <- Matrix::rowSums(x@assays$RNA@counts)
-
-  ## Clear ##
-  x@assays$RNA@counts <- matrix()
-  x@assays$RNA@scale.data <- matrix()
-  x@graphs <- list()
-  x@reductions$pca <- list()
-  x@reductions$harmony <- list()
-  x@meta.data <- data.frame()
-  x@commands <- list()
-  x@assays$RNA@var.features <- list()
-  x@assays$RNA@meta.features <- data.frame()
-  if(Save){
-    saveRDS(x,paste0(name,"_clear.rds"))
-    write.csv(DataB,paste0(name,"_bulk.csv"))
-  }
-  rm(DataB)
-  gc()
-  return(x)}
-#
-## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_Enrich 8a03a29901b31176e32928321b1349e6 ##
 #
@@ -1076,7 +1048,7 @@ MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_TCGA 8a03a29901b31176e32928321b1349e6 ##
-MK_Tcga_CanerFilt <- function(x,cancer = T,save = F,name = "temp"){
+MK_Tcga_CanerFilt <- function(x, cancer = T, save = F, name = "temp"){
   if(sum(duplicated(substr(colnames(x),1,12)))>0){
     x <- x[,colnames(x) %in% sort(colnames(x))[!duplicated(substr(sort(colnames(x)),1,12))]]
   }
@@ -1797,4 +1769,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-11 20:08.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-12 10:55.")
