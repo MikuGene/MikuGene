@@ -10,5 +10,5 @@ License: GPL-3.0 License
 Encoding: UTF-8
 LazyData: true
 Imports: Matrix
-Depends: R (>= 4.0.0)
+Depends: R (>= 3.6.0)
 Contact: Lianhao Song - songlianhao233@gmail.com and 2743623823@qq.com
