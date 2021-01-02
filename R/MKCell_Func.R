@@ -1406,16 +1406,16 @@ MK_Cor <- function(x, y, method = "all", p_cut = 0.01, adj = T, name = NULL, Sav
     Corlist = data.frame(Corlist)
     colnames(Corlist) <- c("Mainname", "Corname", "Cor_p", "P_value_p", "P_adj_p",
                            "Cor_s", "P_value_s", "P_adj_s")
-    Corlist = Corlist[order(Corlist$P_adj),]
+    Corlist = Corlist[order(Corlist$P_adj_p),]
     Corlist$Sig = "No"
     if(adj){
-      Corlist$Sig[as.numeric(Corlist$P_adj) < p_cut] = "Yes"
+      Corlist$Sig[as.numeric(Corlist$P_adj_p) < p_cut] = "Yes"
     }else{
-      Corlist$Sig[as.numeric(Corlist$P_value) < p_cut] = "Yes"
+      Corlist$Sig[as.numeric(Corlist$P_value_p) < p_cut] = "Yes"
     }
     Corlist$State = "None"
-    Corlist$State[as.numeric(Corlist$Cor) > 0] = "pos"
-    Corlist$State[as.numeric(Corlist$Cor) < 0] = "neg"
+    Corlist$State[as.numeric(Corlist$Cor_p) > 0] = "pos"
+    Corlist$State[as.numeric(Corlist$Cor_p) < 0] = "neg"
     if(Save){
       dir.create("backup")
       write.csv(Corlist, paste0(name, "_cor", MK_time(), ".csv"), row.names = F)
@@ -1769,4 +1769,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2020-12-12 10:55.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-1-2 10:03.")
