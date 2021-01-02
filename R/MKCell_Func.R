@@ -447,7 +447,7 @@ MK_cbind_s <- function(F1, F2){
     colnames(SF2r) = colnames(F2)
     F2 = rbind(F2, SF2r)
     rm(SF2r)}
-  F2 = F2[rownames(F1),]
+  F2 = F2[rownames(F1),,drop = F]
   return(cbind(F1, F2))}
 #
 ## 8a03a29901b31176e32928321b1349e6
@@ -1769,4 +1769,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-1-2 10:03.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-1-2 14:05.")
