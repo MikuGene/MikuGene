@@ -23,12 +23,12 @@ suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
 #
-MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, scale = F, markers = NULL, type = NULL){
+MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, scale = F, markers = NULL, type = NULL, Sigl = NULL, Cluster = NULL){
   # Preparation #
   if(ifFPKM){x = MK_FPKMtoTPM(x)}
   if(is.null(type)){type = "SCC"}
   type = as.character(type)
-  # Fast model #
+  # Extra model #
   if(model == "Extra"){
     if(is.null(markers)){
       data("Cellmarker", envir = environment(), package = "MikuGene")
@@ -52,7 +52,7 @@ MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, sca
     }
     return(CP)
   }
-  # Main model #
+  # Intra model #
   if(model == "Intra"){
     x = data.frame(x)
     Check0 = apply(x, 2, function(i) sum(i != 0)) > 0
@@ -65,39 +65,39 @@ MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, sca
     # Choose TYPE #
     if(type == "SCC"){
       data("SccDsig_main", envir = environment(), package = "MikuGene")
-    }   
-    # Match #
-    Gene = intersect(rownames(SCC_Dsig[[1]]), rownames(x))
-    if(length(Gene) < 0.5*nrow(SCC_Dsig[[1]])){
-      message("Lower than 50% common genes !", MK_time())
-    }   
-    Dsign = SCC_Dsig[[1]][match(Gene, rownames(SCC_Dsig[[1]])),]
-    Varia = SCC_Dsig[[2]][match(Gene, rownames(SCC_Dsig[[2]])),]
-    x = apply(x[match(Gene, rownames(x)), ], 2, function(i) i/sum(i))
-    rm(Gene)
-    # ReLm #
-    ReLm = list()
-    for(i in 1:ncol(x)){
-      Tag = x[, i] != 0
-      # Dsig, Vari, Bulk #
-      CoDsig = as.matrix(Dsign[Tag, ])
-      CoVari = as.matrix(Varia[Tag, ])
-      CoBulk = x[Tag, i]
-      # scale matrix #
-      CoDsig = (CoDsig - mean(CoDsig)) / sd(CoDsig)
-      CoBulk = (CoBulk - mean(CoBulk)) / sd(CoDsig)
-      # MK_Lm #
-      ReLm[[i]] = MK_Lm(CoDsig, CoBulk, CoVari, SCC_Dsig[[3]])
-      rm(Tag, CoDsig, CoBulk, CoVari) + gc()
+      # Match #
+      Gene = intersect(rownames(SCC_Dsig[[1]]), rownames(x))
+      if(length(Gene) < 0.5*nrow(SCC_Dsig[[1]])){
+        message("Lower than 50% common genes !", MK_time())
+      }   
+      Dsign = SCC_Dsig[[1]][match(Gene, rownames(SCC_Dsig[[1]])),]
+      Varia = SCC_Dsig[[2]][match(Gene, rownames(SCC_Dsig[[2]])),]
+      x = apply(x[match(Gene, rownames(x)), ], 2, function(i) i/sum(i))
+      rm(Gene)
+      # ReLm #
+      ReLm = list()
+      for(i in 1:ncol(x)){
+        Tag = x[, i] != 0
+        # Dsig, Vari, Bulk #
+        CoDsig = as.matrix(Dsign[Tag, ])
+        CoVari = as.matrix(Varia[Tag, ])
+        CoBulk = x[Tag, i]
+        # scale matrix #
+        CoDsig = (CoDsig - mean(CoDsig)) / sd(CoDsig)
+        CoBulk = (CoBulk - mean(CoBulk)) / sd(CoDsig)
+        # MK_Lm #
+        ReLm[[i]] = MK_Lm(CoDsig, CoBulk, CoVari, SCC_Dsig[[3]])
+        rm(Tag, CoDsig, CoBulk, CoVari) + gc()
+      }
+      # CP #
+      CP = sapply(ReLm, function(i) i$x / sum(i$x))
+      rownames(CP) = colnames(SCC_Dsig[[1]])
+      colnames(CP) = colnames(x)
+      return(CP)
     }
-    # CP #
-    CP = sapply(ReLm, function(i) i$x / sum(i$x))
-    rownames(CP) = colnames(SCC_Dsig[[1]])
-    colnames(CP) = colnames(x)
-    if(detail){
-      data("SccDsig_fine", envir = environment(), package = "MikuGene")
+    if(type == "custom"){
+      return(MK_Tree(x, Sigl, Cluster, SuType = NULL))
     }
-    return(CP)
   }
 }
 #
@@ -1769,4 +1769,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-1-2 14:05.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-1-4 21:18.")
