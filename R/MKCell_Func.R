@@ -230,15 +230,14 @@ MK_Tree <- function(Bulk,Sigl,Cluster,SuClust,SuType = c("Cancer cell","Immune c
 ## MK_Cell 8a03a29901b31176e32928321b1349e6 ##
 #
 MK_Cell <- function(Bulk,Sigl,Cluster) {
-
-  # process scRNA #
-  Sigl <- Sigl[Matrix::rowSums(Sigl) != 0,]
-
-  Meta1 <- apply(Sigl, 2, sum)
-  Meta2 <- apply(Sigl, 2, function(i) i/sum(i))
+  # Check NA #
+  Cluster = as.character(Cluster)
+  Sigl = Sigl[Matrix::rowSums(Sigl) != 0, !is.na(Cluster)]
+  Cluster = Cluster[!is.na(Cluster)]
 
   # abudent variance library and design #
-  Cluster <- as.character(Cluster)
+  Meta1 <- apply(Sigl, 2, sum)
+  Meta2 <- apply(Sigl, 2, function(i) i/sum(i))
   Abud <- sapply(unique(Cluster), function(i) rowMeans(Meta2[,Cluster %in% i]))
   Vari <- sapply(unique(Cluster), function(i) apply(Meta2[,Cluster %in% i],1,var))
   Libr <- sapply(unique(Cluster), function(i) mean(Meta1[Cluster %in% i]))
@@ -1769,4 +1768,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-1-4 21:18.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-1-5 11:06.")
