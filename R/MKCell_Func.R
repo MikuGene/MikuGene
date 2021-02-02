@@ -1313,7 +1313,9 @@ MK_Exct <- function(x, filed = 1, exct = "\\|", verbose = F){
   return(x)
 }
 #
-MK_FPKMtoTPM <- function(x){exp(log(x) - log(sum(x)) + log(1e6))}    
+MK_FPKMtoTPM <- function(x){
+  x = data.frame(apply(x, 2, function(i) exp(log(i) - log(sum(i)) + log(1e+06))))
+  return(x)}  
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
@@ -1768,4 +1770,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-1-5 11:06.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-2-2 8:58.")
