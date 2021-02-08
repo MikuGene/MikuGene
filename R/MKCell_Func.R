@@ -23,7 +23,7 @@ suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
 #
-MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, scale = F, verbose = T,markers = NULL, type = NULL, Sigl = NULL, Cluster = NULL){
+MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, scale = F, verbose = F, markers = NULL, type = NULL, Sigl = NULL, Cluster = NULL){
   # Preparation #
   if(ifFPKM){x = MK_FPKMtoTPM(x)}
   if(is.null(type)){type = "SCC"}
@@ -102,7 +102,7 @@ MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, sca
   }
 }
 #
-MKCell_state <- function(x, Weight = T, Scale = T, verbose = T){
+MKCell_state <- function(x, Weight = T, Scale = T, verbose = F){
   
   data("Cellstate", envir = environment(), package = "MikuGene")
   Glo = Glo[Glo$Genes %in% rownames(x),]
