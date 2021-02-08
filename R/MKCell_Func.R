@@ -111,7 +111,8 @@ MKCell_state <- function(x, Weight = T, Scale = T, verbose = F){
   for (i in 1:length(unique(Glo$State))) {
     Sti = Glo[Glo$State == unique(Glo$State)[i],]
     Stx = x[match(Sti$Genes, rownames(x)),]
-    
+    Dirc = ifelse(Sti$Direct == "positive", 1, -1)
+    Stx = sweep(Stx, 1, Dirc, FUN = "*")
     if(Weight){
       weights = Sti$Ndata / sum(Sti$Ndata)
       Stx = sweep(Stx, 1, weights, FUN = "*")
@@ -120,7 +121,7 @@ MKCell_state <- function(x, Weight = T, Scale = T, verbose = F){
    if(verbose){message(unique(Glo$State)[i], "---", rownames(Stx))}
    St = data.frame(apply(Stx, 2, mean))
    colnames(St) = unique(Glo$State)[i]
-   rm(Sti, Stx)
+   rm(Sti, Stx, Dirc)
    Std = MK_cbind_s(Std, St)
    rm(St)
   }
@@ -1800,4 +1801,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-2-8 17:38.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-2-8 19:06.")
