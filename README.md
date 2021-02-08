@@ -110,4 +110,4 @@ Email 2: 2743623823@qq.com <br>
  <br><hr>
 <b><i>6. Data sets:</i></b><br>
 <i><b>1) Cellmarkers:</b> data('Cellmarker')</i><br>
-<i><b>1) Cellstate (mainly from CancerSEA):</b> data('Cellstate')</i><br>
+<i><b>2) Cellstate (mainly from CancerSEA):</b> data('Cellstate')</i><br>
