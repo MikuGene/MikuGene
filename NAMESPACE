@@ -6,4 +6,4 @@ export("MK_BuildVirusRef", "MK_VirMap",
        "MK_cbind_s", "MK_cbind_i", "MK_asNum",
        "MK_Exct", "MK_Download", "MK_rem0", "MK_FPKMtoTPM",
        "MK_time", "MK_singler", "MK_Cor",
-       "MKCell", "MKCell_MakeDsig")
+       "MKCell", "MKCell_state","MKCell_MakeDsig")
