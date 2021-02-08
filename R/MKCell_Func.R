@@ -23,7 +23,7 @@ suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
 #
-MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, scale = F, markers = NULL, type = NULL, Sigl = NULL, Cluster = NULL){
+MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, scale = F, verbose = T,markers = NULL, type = NULL, Sigl = NULL, Cluster = NULL){
   # Preparation #
   if(ifFPKM){x = MK_FPKMtoTPM(x)}
   if(is.null(type)){type = "SCC"}
@@ -44,6 +44,7 @@ MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, sca
     Cellmark = Cellmark[Cellmark$Genes %in% rownames(x),]
     Cellmark = split(Cellmark$Genes, Cellmark$Cell)
     CP = lapply(Cellmark, function(i){
+      if(verbose){message(i)}
       apply(x[intersect(rownames(x), i), , drop = F], 2, mean, na.rm = T)
     })
     CP = do.call(cbind, CP)
@@ -99,6 +100,35 @@ MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, sca
       return(MK_Tree(x, Sigl, Cluster, SuType = NULL))
     }
   }
+}
+#
+MKCell_state <- function(x, Weight = T, Scale = T, verbose = T){
+  
+  data("Cellstate", envir = environment(), package = "MikuGene")
+  Glo = Glo[Glo$Genes %in% rownames(x),]
+  
+  Std = data.frame()
+  for (i in 1:length(unique(Glo$State))) {
+    Sti = Glo[Glo$State == unique(Glo$State)[i],]
+    Stx = x[match(Sti$Genes, rownames(x)),]
+    
+    if(Weight){
+      weights = Sti$Ndata / sum(Sti$Ndata)
+      Stx = sweep(Stx, 1, weights, FUN = "*")
+      rm(weights)
+    }
+   if(verbose){message(unique(Glo$State)[i], "---", rownames(Stx))}
+   St = data.frame(apply(Stx, 2, mean))
+   colnames(St) = unique(Glo$State)[i]
+   rm(Sti, Stx)
+   Std = MK_cbind_s(Std, St)
+   rm(St)
+  }
+  
+  if(Scale){
+    Std = data.frame(apply(Std, 2, function(i) (i - min(i))/(max(i) - min(i))))
+  }
+  return(Std)
 }
 #
 MKCell_MakeDsig = function (Sigl, Cluster){
@@ -1770,4 +1800,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-2-2 8:58.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-2-8 17:38.")
