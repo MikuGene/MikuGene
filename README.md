@@ -1,6 +1,6 @@
 <h2>MikuGene: An integrated data analysis software package for bioinformatics beginners.</h2>
 MikuGene Bioinformatics Ecological Community. ---- <i>Lianhao Song</i> (CodeNight)<br>
-Newest Version: 1.2.0<br>
+Newest Version: 1.2.1<br>
 <br>
 <i>@.@ What I've done:</i><br>
 <br>
@@ -110,3 +110,4 @@ Email 2: 2743623823@qq.com <br>
  <br><hr>
 <b><i>6. Data sets:</i></b><br>
 <i><b>1) Cellmarkers:</b> data('Cellmarker')</i><br>
+<i><b>1) Cellstate:</b> data('Cellstate')</i><br>
