@@ -1,4 +1,4 @@
-![image](https://github.com/MikuGene/MikuGene/blob/main/data/2233-c.jpg)
+![image](http://hpvgroup.imwork.net/MKCell/css/2233-c.png)
 <h2>MikuGene: An integrated data analysis software package for bioinformatics beginners.</h2>
 MikuGene Bioinformatics Ecological Community. ---- <i>Lianhao Song</i> (CodeNight)<br>
 Newest Version: 1.2.1<br>
