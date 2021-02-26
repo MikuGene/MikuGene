@@ -1,4 +1,4 @@
-！[Image text](https://raw.githubusercontent.com/MikuGene/MK-class/master/2233.png)
+![image](https://github.com/MikuGene/MK-class/blob/master/2233.png)
 <h2>MikuGene: An integrated data analysis software package for bioinformatics beginners.</h2>
 MikuGene Bioinformatics Ecological Community. ---- <i>Lianhao Song</i> (CodeNight)<br>
 Newest Version: 1.2.1<br>
