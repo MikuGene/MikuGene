@@ -112,4 +112,3 @@ Email 2: 2743623823@qq.com <br>
 <b><i>6. Data sets:</i></b><br>
 <i><b>1) Cellmarkers:</b> data('Cellmarker')</i><br>
 <i><b>2) Cellstate (mainly from CancerSEA):</b> data('Cellstate')</i><br>
-![image](http://hpvgroup.imwork.net/MKCell/css/2233-c.jpg)
