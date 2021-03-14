@@ -1608,7 +1608,7 @@ MK_BuildVirusRef <- function(version = "2020.3", OutVs = "default", verbose = T)
   message("MK_virusref build done .", MK_time())
 }
 ##
-MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T){
+MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T, Pair = T){
   options(scipen = 200)
   if(is.null(name)){
   name = "temp"
@@ -1639,10 +1639,10 @@ MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T){
 
   # fea-count #
   if(GTF){
-    Fea1 = Rsubread::featureCounts(paste0(name, ".BAM"), isPairedEnd = T,
+    Fea1 = Rsubread::featureCounts(paste0(name, ".BAM"), isPairedEnd = Pair,
                                    annot.ext = "MikuGene_virus.gtf",
                                    isGTFAnnotationFile = T, verbose = F)
-    Fea2 = Rsubread::featureCounts(paste0(name, ".BAM"), isPairedEnd = T,
+    Fea2 = Rsubread::featureCounts(paste0(name, ".BAM"), isPairedEnd = Pair,
                                    annot.ext = "MikuGenome_virus.gtf",
                                    isGTFAnnotationFile = T, verbose = F)
 
@@ -1801,4 +1801,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-2-8 19:06.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-3-14 17:46.")
