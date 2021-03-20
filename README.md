@@ -113,3 +113,5 @@ Email 2: 2743623823@qq.com <br>
 <b><i>6. Data sets:</i></b><br>
 <i><b>1) Cellmarkers:</b> data('Cellmarker')</i><br>
 <i><b>2) Cellstate (mainly from CancerSEA):</b> data('Cellstate')</i><br>
+<i><b>2) Ligand and receptor (mainly from Ramilowski et al., 2015):</b> data('LigandReceptor')</i><br>
+Ramilowski, J.A., T. Goldberg, J. Harshbarger, E. Kloppmann, M. Lizio, V.P. Satagopam, M. Itoh, H. Kawaji, P. Carninci, B. Rost, and A.R. Forrest. 2015. A draft network of ligand-receptor-mediated multicellular signalling in human. Nat Commun. 6:7866.
