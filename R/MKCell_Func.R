@@ -1495,7 +1495,7 @@ MK_Cor <- function(x, y, method = "all", p_cut = 0.01, adj = T, name = NULL, Sav
 
 ## MK_Microbiology 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_BuildVirusRef <- function(version = "2020.3", OutVs = "default", verbose = T){
+MK_BuildVirusRef <- function(version = "2021.1", OutVs = "default", verbose = T){
   options(scipen = 200)
 
   # OutV #
@@ -1801,4 +1801,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-3-14 17:46.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-4-12 9:53.")
