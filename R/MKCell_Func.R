@@ -876,6 +876,36 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c
   return(x)
 }
 #
+MK_spatial = function(Dir = getwd(), name = NULL, Reso = 0.6, Verbose = T, save = T){
+  
+  if(!any(installed.packages() %in% "Seurat")){
+    install.packages("Seurat")
+  }
+  suppressMessages(library(Seurat))
+  
+  if(is.null(name)){name = "temp"}
+  name = as.character(name)
+  
+  x = Load10X_Spatial(Dir, to.upper = T, 
+                            filename = grep("matrix.h5", list.files(Dir), value = T))
+  x = SCTransform(x, assay = "Spatial", verbose = Verbose)
+  x = RunPCA(x, verbose = F)
+  x = RunTSNE(x, dims = 1:50)
+  x = RunUMAP(x, dims = 1:50, verbose = Verbose)
+  x = FindNeighbors(x)
+  x = FindClusters(x, resolution = Reso)
+  
+  if(Verbose){print(DimPlot(x, label = T) + SpatialDimPlot(x, label = T))}
+  
+  if(save){
+    dir.create("backup")
+    saveRDS(x, paste0("backup/", name, MK_time(), "_backup.rds"))}
+  gc()
+  message("MK_Spatial process well done !!!", MK_time())
+  
+  return(x)
+}
+#
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_singler 8a03a29901b31176e32928321b1349e6 ##
@@ -1801,4 +1831,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-4-12 9:53.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-4-26 20:23.")
