@@ -53,6 +53,9 @@ Email 2: 2743623823@qq.com <br>
  <b>name:</b> Custom naming of this process. Default 'temp'.<br>
  <b>Save:</b> The process will automatically create a backup folder under the working path, and store the resulting object as a name.csv file. Default 'Save = T'<br>
  <b><i>OUTPUT:</i></b> This function will output a pruned cell-label.<br>
+ <br>
+<b><i>3) MK_Spatial(Dir = getwd(), name = NULL, Reso = 0.6, Verbose = T, save = T)</i></b><br>
+ <b>Dir:</b> waiting process ...<br>
  <br><hr>
 <b><i>2. Gene biological functional enrichment analysis:</i></b><br>
 <b><i>MK_Enrich(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.3)</i></b><br>
