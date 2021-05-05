@@ -1,4 +1,4 @@
-<h2>MikuGene: An integrated data analysis software package for bioinformatics beginners.</h2>
+<h2>MikuGene: An integrated data analysis software package for bioinformatics.</h2>
 MikuGene Bioinformatics Ecological Community. ---- <i>Lianhao Song</i> (CodeNight)<br>
 Newest Version: 1.2.1<br>
 <br>
