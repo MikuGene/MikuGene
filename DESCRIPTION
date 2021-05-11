@@ -1,7 +1,7 @@
 Package: MikuGene
 Type: Package
 Title: A simple bioinformatics analysis software package.
-Version: 1.2.1.1
+Version: 1.2.2.1
 Date: 2020-10-19
 Author: Lianhao Song
 Maintainer: Lianhao Song <songlianhao233@gmail.com>

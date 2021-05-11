@@ -1525,10 +1525,16 @@ MK_Cor <- function(x, y, method = "all", p_cut = 0.01, adj = T, name = NULL, Sav
 
 ## MK_Microbiology 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_BuildVirusRef <- function(version = "2021.1", OutVs = "default", verbose = T){
+MK_BuildVirusRef <- function(dir = getwd(), version = "2021.1", OutVs = "default", verbose = T){
   options(scipen = 200)
-
-  # OutV #
+  odir = getwd()
+  
+  # Set wd #
+  dir = as.character(dir)
+  dir.create(dir)
+  setwd(dir)
+  
+  # Out intViru #
   if(!is.null(OutVs)){
     if(any(OutVs %in% "default")){
       if(verbose){
@@ -1539,7 +1545,7 @@ MK_BuildVirusRef <- function(version = "2021.1", OutVs = "default", verbose = T)
                 "NC_015253", "NC_043329", "NC_043314", "NC_041831")
     }
   }
-
+  
   # Download from virusite.org #
   if(!any(list.files() %in% "MikuGene_virus.fasta.zip")){
     if(verbose){
@@ -1555,7 +1561,7 @@ MK_BuildVirusRef <- function(version = "2021.1", OutVs = "default", verbose = T)
   }
   unzip("MikuGene_virus.fasta.zip")
   unzip("MikuGenome_virus.fasta.zip")
-
+  
   if(!any(installed.packages() %in% "Biostrings")){
     if(!any(installed.packages() %in% "BiocManager")){
       install.packages("BiocManager")
@@ -1563,7 +1569,7 @@ MK_BuildVirusRef <- function(version = "2021.1", OutVs = "default", verbose = T)
     BiocManager::install("Biostrings")
   }
   suppressMessages(library(Biostrings))
-
+  
   # Ref from Genome #
   if(verbose){
     message("Processing genomes.fasta ...", MK_time())
@@ -1593,7 +1599,7 @@ MK_BuildVirusRef <- function(version = "2021.1", OutVs = "default", verbose = T)
   Geno@ranges@NAMES = Geno_ID
   writeXStringSet(Geno, "MikuGenome_virus.fasta", append = F)
   rm(Geno) + gc()
-
+  
   # Ref from Gene #
   if(verbose){
     message("Processing genes.fasta ...", MK_time())
@@ -1633,15 +1639,19 @@ MK_BuildVirusRef <- function(version = "2021.1", OutVs = "default", verbose = T)
                    sore = ".", strand = "+", frame = ".",
                    attributes = paste0(Gtf_gene, ";", Gtf_tran, ";"))
   write.table(Gtf, "MikuGene_virus.gtf", row.names = F, col.names = F, sep = "\t", quote = F)
+  
+  # Back wd #
+  setwd(odir)
   rm(list = ls()) + gc()
-
   message("MK_virusref build done .", MK_time())
 }
 ##
-MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T, Pair = T){
+MK_VirMap <- function(path_r1, path_r2, refdir = getwd(), name = NULL, maxMiss = 3, GTF = T, Pair = T){
   options(scipen = 200)
+  refdir = as.character(refdir)
+  
   if(is.null(name)){
-  name = "temp"
+    name = "temp"
   }
   if(!any(installed.packages() %in% "Rsubread")){
     if(!any(installed.packages() %in% "BiocManager")){
@@ -1650,32 +1660,33 @@ MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T, Pair 
     BiocManager::install("Rsubread")
   }
   suppressMessages(library(Rsubread))
-
+  
   # Ref check #
-  if(!any(grepl("MikuVirusref", list.files()) & !grepl("MikuVirusref.log", list.files()))){
-
+  if(!any(grepl("MikuVirusref", list.files(refdir)) & 
+          !grepl("MikuVirusref.log", list.files(refdir)))){
+    
     # build ref-index #
-    buildindex("MikuVirusref", "MikuGenome_virus.fasta")
+    buildindex(paste0(refdir, "/MikuVirusref"), paste0(refdir, "/MikuGenome_virus.fasta"))
   }
-
+  
   # Read Geno/Gene meta #
-  GenoID = read.csv("Virus_genome.csv", row.names = 1)
-  GeneID = read.csv("Virus_gene.csv",row.names = 1)
-
+  GenoID = read.csv(paste0(refdir, "/Virus_genome.csv"), row.names = 1)
+  GeneID = read.csv(paste0(refdir, "/Virus_gene.csv"), row.names = 1)
+  
   # Align #
-  Rsubread::align(index = "MikuVirusref", readfile1 = path_r1, readfile2 = path_r2,
+  Rsubread::align(index = paste0(refdir, "/MikuVirusref"), readfile1 = path_r1, readfile2 = path_r2,
                   output_file = paste0(name, ".BAM"), nBestLocations = nrow(GenoID),
                   maxMismatches = maxMiss, nthreads = 6)
-
+  
   # fea-count #
   if(GTF){
     Fea1 = Rsubread::featureCounts(paste0(name, ".BAM"), isPairedEnd = Pair,
-                                   annot.ext = "MikuGene_virus.gtf",
+                                   annot.ext = paste0(refdir, "/MikuGene_virus.gtf"),
                                    isGTFAnnotationFile = T, verbose = F)
     Fea2 = Rsubread::featureCounts(paste0(name, ".BAM"), isPairedEnd = Pair,
-                                   annot.ext = "MikuGenome_virus.gtf",
+                                   annot.ext = paste0(refdir, "/MikuGenome_virus.gtf"),
                                    isGTFAnnotationFile = T, verbose = F)
-
+    
     # process gene #
     Re_Gene = data.frame(Fea1$counts)
     Re_Gene$Name = GeneID$Name[as.numeric(gsub("MK", "", rownames(Re_Gene)))]
@@ -1685,7 +1696,7 @@ MK_VirMap <- function(path_r1, path_r2, name = NULL, maxMiss = 3, GTF = T, Pair 
       Re_Gene = Re_Gene[order(Re_Gene[,1], decreasing = T),]
     }
     write.csv(Re_Gene, paste(name, "Re_Gene.csv"))
-
+    
     # process genome #
     Re_Genome = data.frame(Fea2$counts)
     Re_Genome$Name = GenoID$Name[match(rownames(Re_Genome), GenoID$ID)]
@@ -1818,17 +1829,17 @@ if(MKrcpp){
   MK_asMatr <- function(mat){
 
     ## extract ##
-    rowP <- mat@i
-    colP <- findInterval(seq(mat@x)-1, mat@p[-1])
+    rowP = mat@i
+    colP = findInterval(seq(mat@x)-1, mat@p[-1])
 
-    Mat <- MKrc_asmat(rp = rowP, cp = colP, z = mat@x,
+    Mat = MKrc_asmat(rp = rowP, cp = colP, z = mat@x,
                       nrows =  mat@Dim[1], ncols = mat@Dim[2])
 
     ## return ##
-    row.names(Mat) <- mat@Dimnames[[1]]
-    colnames(Mat) <- mat@Dimnames[[2]]
+    row.names(Mat) = mat@Dimnames[[1]]
+    colnames(Mat) = mat@Dimnames[[2]]
     return(Mat)
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-4-26 20:23.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-5-11 20:05.")

@@ -1,6 +1,6 @@
 <h2>MikuGene: An integrated data analysis software package for bioinformatics.</h2>
 MikuGene Bioinformatics Ecological Community. ---- <i>Lianhao Song</i> (CodeNight)<br>
-Newest Version: 1.2.1<br>
+Newest Version: 1.2.2<br>
 <br>
 <i>@.@ What I've done:</i><br>
 <br>
@@ -97,8 +97,8 @@ Email 2: 2743623823@qq.com <br>
  <b><i>OUTPUT:</i></b> This function will read the <i>MK_toMMs</i> output.<br>
  <br><hr>
 <b><i>5. Virus Mapping:</i></b><br>
-<b><i>1) MK_BuildVirusRef(version = "2020.3", OutVs = "default", verbose = T)</i></b><br>
- <b>version:</b> The data version of virusite.org. Default "2020.3".<br>
+<b><i>1) MK_BuildVirusRef(version = "2021.1", OutVs = "default", verbose = T)</i></b><br>
+ <b>version:</b> The data version of virusite.org. Default "2021.1".<br>
  <b>OutVs:</b> The SeqID of the virus genome not included in alignment. If none, input NULL. Default 'default'.<br>
  <b>verbose:</b> Messages in the process will be displayed. Default 'verbose = T'.<br>
  <b><i>OUTPUT:</i></b> This function will build virus-reference locally.<br>

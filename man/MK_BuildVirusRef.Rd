@@ -8,10 +8,13 @@ MK_BuildVirusRef
 Use the data of virusite.org to make reference files for virus.
 }
 \usage{
-MK_BuildVirusRef(version = "2020.3")
+MK_BuildVirusRef(dir = getwd(), version = "2021.1", OutVs = "default", verbose = T)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{dir}{
+the saving directory of the reference data.
+}
   \item{version}{
 the version of the data.
 }
