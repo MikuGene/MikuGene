@@ -711,7 +711,7 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
 #
 ## 8a03a29901b31176e32928321b1349e6
 
-## MK_read10x 8a03a29901b31176e32928321b1349e6 ##
+## MK_read10X 8a03a29901b31176e32928321b1349e6 ##
 #
 MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefile = "gene", Exprfile = "matrix", View = T, Save = T){
 
@@ -724,20 +724,19 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
   if(is.null(IDin)){
     IDin = gsub("_.*", "", list.files(MKdir))
     IDin = names(table(IDin))[table(IDin) > 2]
+    if(length(IDin) == 0){
+      IDin = "."
+    }
   }
 
   ## IDname ##
   IDname = c(Barfile, Genefile, Exprfile)
-
-  ## Change wd ##
-  Odir = getwd()
-  setwd(MKdir)
   if(View){message("MK read10X! Now we working on: ", MKdir, MK_time())}
 
   ## Check File names ##
   File_name = list()
   for (i in 1:3) {
-    File_name[[i]] = grep(IDname[i], list.files(), value = T)
+    File_name[[i]] = grep(IDname[i], list.files(MKdir), value = T)
     if(!length(File_name[[i]]) > 0){stop("No files matched by your ", IDname[i], " name !", MK_time())}
   }
 
@@ -756,10 +755,10 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
     }
 
     ## Read Barcode ##
-    Barcode = readLines(File_nameI[[1]])
+    Barcode = readLines(paste0(MKdir, "/", File_nameI[[1]]))
 
     ## Read Feature ##
-    Gene = read.delim(File_nameI[[2]], header = F)
+    Gene = read.delim(paste0(MKdir, "/", File_nameI[[2]]), header = F)
     Ig = NULL
     if(ncol(Gene) > 2){
       Ig = Gene$V3
@@ -767,7 +766,7 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
     }
 
     ## Read Expr ##
-    Expr = Matrix::readMM(File_nameI[[3]])
+    Expr = Matrix::readMM(paste0(MKdir, "/", File_nameI[[3]]))
 
     ## Process ##
     colnames(Expr) = paste0(IDin[i], "_", Barcode)
@@ -780,10 +779,6 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
     rm(File_nameI, Barcode, Gene, Ig, Expr)
     gc()
   }
-
-  ## Back wd ##
-  setwd(Odir)
-  rm(Odir)
 
   return(File_data)
 }
@@ -1842,4 +1837,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-5-11 20:05.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-6-19 09:52.")
