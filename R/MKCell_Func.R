@@ -7,7 +7,7 @@ MKtime = T
 MK_time = function(){
   mtime = gsub(" ", "", gsub(":", "", date()))
   mtime = sub("^...", " ", mtime)
-  if(!MKtime){mtime = NULL}
+  if(!MKtime) mtime = NULL
   return(mtime)
 }
 
@@ -16,17 +16,15 @@ message("  MKCell time system: From ", date(), " to", MK_time())
 # Need nnls;Matrix;Seurat;ggplot2;harmony; if MKrcpp, neead Rtools.
 
 options(stringsAsFactors = F)
-if(!any(installed.packages() %in% "Matrix")){
-  install.packages("Matrix")
-}
+if(!any(installed.packages() %in% "Matrix")) install.packages("Matrix")
 suppressMessages(library(Matrix))
 
 ## MKCell Main Functions 8a03a29901b31176e32928321b1349e6 ##
 #
 MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, scale = F, verbose = F, markers = NULL, type = NULL, Sigl = NULL, Cluster = NULL){
   # Preparation #
-  if(ifFPKM){x = MK_FPKMtoTPM(x)}
-  if(is.null(type)){type = "SCC"}
+  if(ifFPKM) x = MK_FPKMtoTPM(x)
+  if(is.null(type)) type = "SCC"
   type = as.character(type)
   # Extra model #
   if(model == "Extra"){
@@ -44,33 +42,30 @@ MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, sca
     Cellmark = Cellmark[Cellmark$Genes %in% rownames(x),]
     Cellmark = split(Cellmark$Genes, Cellmark$Cell)
     CP = lapply(Cellmark, function(i){
-      if(verbose){message(i)}
+      if(verbose) message(i)
       apply(x[intersect(rownames(x), i), , drop = F], 2, mean, na.rm = T)
     })
     CP = do.call(cbind, CP)
-    if(scale){
+    if(scale)
       CP = apply(CP, 2, function(i) (i - min(i))/(max(i) - min(i)))
-    }
     return(CP)
   }
   # Intra model #
   if(model == "Intra"){
     x = data.frame(x)
     Check0 = apply(x, 2, function(i) sum(i != 0)) > 0
-    if(!all(Check0)){
+    if(!all(Check0))
       stop(message("!!! Error, Bulk reads all 0 !!!", MK_time()))
-    }
     x = x[, Check0, drop = F]
     rm(Check0)
-    if(ncol(x) < 2){x = cbind(x, x)}
+    if(ncol(x) < 2) x = cbind(x, x)
     # Choose TYPE #
     if(type == "SCC"){
       data("SccDsig_main", envir = environment(), package = "MikuGene")
       # Match #
       Gene = intersect(rownames(SCC_Dsig[[1]]), rownames(x))
-      if(length(Gene) < 0.5*nrow(SCC_Dsig[[1]])){
+      if(length(Gene) < 0.5*nrow(SCC_Dsig[[1]]))
         message("Lower than 50% common genes !", MK_time())
-      }   
       Dsign = SCC_Dsig[[1]][match(Gene, rownames(SCC_Dsig[[1]])),]
       Varia = SCC_Dsig[[2]][match(Gene, rownames(SCC_Dsig[[2]])),]
       x = apply(x[match(Gene, rownames(x)), ], 2, function(i) i/sum(i))
@@ -96,13 +91,12 @@ MKCell = function(x, model = c("Extra", "Intra")[1], detail = T, ifFPKM = F, sca
       colnames(CP) = colnames(x)
       return(CP)
     }
-    if(type == "custom"){
+    if(type == "custom")
       return(MK_Tree(x, Sigl, Cluster, SuType = NULL))
-    }
   }
 }
 #
-MKCell_state <- function(x, Weight = T, Scale = T, verbose = F){
+MKCell_state = function(x, Weight = T, Scale = T, verbose = F){
   
   data("Cellstate", envir = environment(), package = "MikuGene")
   Glo = Glo[Glo$Genes %in% rownames(x),]
@@ -118,7 +112,7 @@ MKCell_state <- function(x, Weight = T, Scale = T, verbose = F){
       Stx = sweep(Stx, 1, weights, FUN = "*")
       rm(weights)
     }
-   if(verbose){message(unique(Glo$State)[i], "---", rownames(Stx))}
+   if(verbose) message(unique(Glo$State)[i], "---", rownames(Stx))
    St = data.frame(apply(Stx, 2, mean))
    colnames(St) = unique(Glo$State)[i]
    rm(Sti, Stx, Dirc)
@@ -126,9 +120,8 @@ MKCell_state <- function(x, Weight = T, Scale = T, verbose = F){
    rm(St)
   }
   
-  if(Scale){
+  if(Scale)
     Std = data.frame(apply(Std, 2, function(i) (i - min(i))/(max(i) - min(i))))
-  }
   return(Std)
 }
 #
@@ -187,24 +180,24 @@ MKCell_MakeDsig = function (Sigl, Cluster){
 
 ## MK_Tree 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_Tree <- function(Bulk,Sigl,Cluster,SuClust,SuType = c("Cancer cell","Immune cell")){
+MK_Tree = function(Bulk,Sigl,Cluster,SuClust,SuType = c("Cancer cell","Immune cell")){
 
   # check bulk #
-  Check0 <- apply(Bulk,2,function(i) sum(i != 0)) > 0
-  if(sum(Check0) == 0){stop(message("!!! Error, Bulk reads all 0 !!!", MK_time()))}
-  Bulk <- Bulk[,Check0,drop = F]
+  Check0 = apply(Bulk,2,function(i) sum(i != 0)) > 0
+  if(sum(Check0) == 0) stop(message("!!! Error, Bulk reads all 0 !!!", MK_time()))
+  Bulk = Bulk[,Check0,drop = F]
   rm(Check0)
-  if(ncol(data.frame(Bulk)) < 2){Bulk <- cbind(Bulk,Bulk)}
+  if(ncol(data.frame(Bulk)) < 2) Bulk <- cbind(Bulk,Bulk)
 
   # tree 1 #
-  Re <- MK_Cell(Bulk,Sigl,Cluster)
+  Re = MK_Cell(Bulk,Sigl,Cluster)
 
   # tree 2 #
-  Re_Tree <- list()
-  Re_Type <- c()
+  Re_Tree = list()
+  Re_Type = c()
 
   # save index #
-  Te <- 0
+  Te = 0
   if(is.null(SuType)){
     message("Only print Tree 1.", MK_time())
     return(data.frame(Re[[1]]))
@@ -212,183 +205,186 @@ MK_Tree <- function(Bulk,Sigl,Cluster,SuClust,SuType = c("Cancer cell","Immune c
 
   for (Type in SuType) {
 
-    Te <- Te + 1
-
+    Te = Te + 1
     # extract one type #
-    Re_Bulk <- sapply(Re[[2]], function(i) i[,colnames(i) == Type])
-    Re_Sigl <- Sigl[,Cluster == Type]
-    colnames(Re_Bulk) <- colnames(Bulk)
+    Re_Bulk = sapply(Re[[2]], function(i) i[, colnames(i) == Type])
+    Re_Sigl = Sigl[, Cluster == Type]
+    colnames(Re_Bulk) = colnames(Bulk)
 
     # check bulk #
-    Check0 <- apply(Re_Bulk,2,function(i) sum(i != 0)) > 0
+    Check0 = apply(Re_Bulk, 2, function(i) sum(i != 0)) > 0
     if(sum(Check0) < 1){
       message("No tree 2, only print tree 1", MK_time())
       return(data.frame(Re[[1]]))
     }
-
-    Re_Bulk <- Re_Bulk[,Check0]
-    if(ncol(data.frame(Re_Bulk)) < 2){Re_Bulk <- cbind(Re_Bulk,Re_Bulk)}
+    Re_Bulk = Re_Bulk[, Check0]
+    if(ncol(data.frame(Re_Bulk)) < 2) Re_Bulk <- cbind(Re_Bulk,Re_Bulk)
 
     # rerun #
-    Re_Sub <- MK_Cell(Re_Bulk,Re_Sigl,SuClust[Cluster == Type])
+    Re_Sub = MK_Cell(Re_Bulk, Re_Sigl, SuClust[Cluster == Type])
 
     # tree 2 proportion #
-    Fix <- NULL
+    Fix = NULL
     if(sum(!Check0) > 0){
-      Fix <- matrix(0,nrow = nrow(Re_Sub[[1]]),ncol = sum(!Check0))
-      colnames(Fix) <- colnames(Re[[1]])[!Check0]}
-    Re_Sub[[1]] <- cbind(Re_Sub[[1]],Fix)
-    Re_Tree[[Te]] <- sweep(Re_Sub[[1]][,match(colnames(Re_Sub[[1]]),colnames(Re[[1]]))],2,Re[[1]][Type,],FUN = "*")
-    Re_Type[Te] <- Type
+      Fix <- matrix(0, nrow = nrow(Re_Sub[[1]]), ncol = sum(!Check0))
+      colnames(Fix) = colnames(Re[[1]])[!Check0]
+    }
+    Re_Sub[[1]] = cbind(Re_Sub[[1]],Fix)
+    Re_Tree[[Te]] = sweep(Re_Sub[[1]][, match(colnames(Re_Sub[[1]]), colnames(Re[[1]]))], 2, Re[[1]][Type,], FUN = "*")
+    Re_Type[Te] = Type
 
-    rm(Re_Sub)}
+    rm(Re_Sub)
+  }                
 
   # tree all proportion #
-  ReAll <- data.frame(rbind(Re[[1]],do.call(rbind,Re_Tree)))
+  ReAll = data.frame(rbind(Re[[1]], do.call(rbind, Re_Tree)))
 
   # tree tag #
-  ReAll$Tree <- c(rep("Tree 1",nrow(Re[[1]])),
-                  rep(paste0("Tree 2 in ",Re_Type[1]),nrow(Re_Tree[[1]])),
-                  rep(paste0("Tree 2 in ",Re_Type[2]),nrow(Re_Tree[[2]])))
+  ReAll$Tree <- c(rep("Tree 1", nrow(Re[[1]])),
+                  rep(paste0("Tree 2 in ",Re_Type[1]), nrow(Re_Tree[[1]])),
+                  rep(paste0("Tree 2 in ",Re_Type[2]), nrow(Re_Tree[[2]])))
 
   # cell proportion #
-  rm(Re,Re_Tree,Re_Type,Te)
+  rm(Re, Re_Tree, Re_Type, Te)
   gc()
-  return(ReAll)}
+  return(ReAll)
+}
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_Cell 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_Cell <- function(Bulk,Sigl,Cluster) {
+MK_Cell = function(Bulk, Sigl, Cluster) {
   # Check NA #
   Cluster = as.character(Cluster)
   Sigl = Sigl[Matrix::rowSums(Sigl) != 0, !is.na(Cluster)]
   Cluster = Cluster[!is.na(Cluster)]
 
   # abudent variance library and design #
-  Meta1 <- apply(Sigl, 2, sum)
-  Meta2 <- apply(Sigl, 2, function(i) i/sum(i))
-  Abud <- sapply(unique(Cluster), function(i) rowMeans(Meta2[,Cluster %in% i]))
-  Vari <- sapply(unique(Cluster), function(i) apply(Meta2[,Cluster %in% i],1,var))
-  Libr <- sapply(unique(Cluster), function(i) mean(Meta1[Cluster %in% i]))
-  Dsig <- sweep(Abud,2,Libr,FUN = "*")
+  Meta1 = apply(Sigl, 2, sum)
+  Meta2 = apply(Sigl, 2, function(i) i/sum(i))
+  Abud = sapply(unique(Cluster), function(i) rowMeans(Meta2[,Cluster %in% i]))
+  Vari = sapply(unique(Cluster), function(i) apply(Meta2[,Cluster %in% i],1,var))
+  Libr = sapply(unique(Cluster), function(i) mean(Meta1[Cluster %in% i]))
+  Dsig = sweep(Abud, 2, Libr, FUN = "*")
 
-  rm(Meta1,Meta2,Abud)
+  rm(Meta1, Meta2, Abud)
   gc()
 
   # common gene and match #
-  Gene <- intersect(rownames(Dsig), rownames(Bulk))
-  if (length(Gene) < 0.5*min(nrow(Bulk), nrow(Sigl))) {write.csv(c("Lower than 50% common genes!",MK_time()),"Error.csv")}
-  Dsig <- Dsig[match(Gene, rownames(Dsig)),]
-  Vari <- Vari[match(Gene, rownames(Dsig)),]
-  Bulk <- apply(Bulk[match(Gene, rownames(Bulk)),], 2, function(i) i/sum(i))
+  Gene = intersect(rownames(Dsig), rownames(Bulk))
+  if (length(Gene) < 0.5*min(nrow(Bulk), nrow(Sigl))) write.csv(c("Lower than 50% common genes!",MK_time()),"Error.csv")
+  Dsig = Dsig[match(Gene, rownames(Dsig)),]
+  Vari = Vari[match(Gene, rownames(Dsig)),]
+  Bulk = apply(Bulk[match(Gene, rownames(Bulk)),], 2, function(i) i/sum(i))
   rm(Gene)
   gc()
 
   # weight-nnls #
-  ReLm <- list()
+  ReLm = list()
   for (i in 1:ncol(Bulk)) {
 
     # process bulk #
-    Tag <- (Bulk[, i] != 0)
+    Tag = (Bulk[, i] != 0)
 
-    CoDsig <- Dsig[Tag,]
-    CoVari <- Vari[Tag,]
-    CoBulk <- Bulk[Tag,i]
+    CoDsig = Dsig[Tag,]
+    CoVari = Vari[Tag,]
+    CoBulk = Bulk[Tag, i]
 
     # center and normalize #
-    CoDsig <- (CoDsig - mean(CoDsig)) / sd(CoDsig)
-    CoBulk <- (CoBulk - mean(CoBulk)) / sd(CoBulk)
+    CoDsig = (CoDsig - mean(CoDsig)) / sd(CoDsig)
+    CoBulk = (CoBulk - mean(CoBulk)) / sd(CoBulk)
 
     # weight-nnls #
-    ReLm[[i]] <- MK_Lm(CoDsig,CoBulk,CoVari,Libr)
-    rm(Tag,CoDsig,CoVari,CoBulk)+gc()}
+    ReLm[[i]] = MK_Lm(CoDsig, CoBulk, CoVari, Libr)
+    rm(Tag, CoDsig, CoVari, CoBulk) + gc()
+  }
 
   # cell proportion #
-  Cell <- sapply(ReLm, function(i) i$x/sum(i$x))
-  rownames(Cell) <- colnames(Dsig)
-  colnames(Cell) <- colnames(Bulk)
+  Cell = sapply(ReLm, function(i) i$x/sum(i$x))
+  rownames(Cell) = colnames(Dsig)
+  colnames(Cell) = colnames(Bulk)
 
   # cell matrix #
-  MaCell <- lapply(ReLm, function(i) sweep(Dsig,2,i$x,FUN = "*"))
+  MaCell = lapply(ReLm, function(i) sweep(Dsig,2,i$x,FUN = "*"))
 
   # results #
-  rm(Dsig,ReLm,Vari,Libr)+gc()
-  return(list(Cell,MaCell))}
+  rm(Dsig, ReLm, Vari, Libr) + gc()
+  return(list(Cell, MaCell))
+}
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_Lm 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_Lm <- function(CoDsig,CoBulk,CoVari,Libr){
+MK_Lm = function(CoDsig, CoBulk, CoVari, Libr){
 
   # nnls #
-  if(!any(installed.packages() %in% "nnls")){
-    install.packages("nnls")
-  }
+  if(!any(installed.packages() %in% "nnls")) install.packages("nnls")
+  
   library(nnls)
-  Lm <- nnls(CoDsig,CoBulk)
-  R <- resid(Lm)
+  Lm = nnls(CoDsig, CoBulk)
+  R = resid(Lm)
 
   # weight gene #
-  WgGene <- as.numeric(1/(1e-04 + R^2 + colSums((Lm$x * Libr)^2 * t(CoVari))))
+  WgGene = as.numeric(1/(1e-04 + R^2 + colSums((Lm$x * Libr)^2 * t(CoVari))))
 
-  rm(Lm,R)
+  rm(Lm, R)
   gc()
 
   # weight bulk and design #
-  WgCoBulk <- CoBulk * sqrt(WgGene)
-  WgCoDsig <- CoDsig * sqrt(WgGene)
+  WgCoBulk = CoBulk * sqrt(WgGene)
+  WgCoDsig = CoDsig * sqrt(WgGene)
 
   # weight-nnls #
-  WgLm <- nnls(WgCoDsig, WgCoBulk)
-  WgP <- WgLm$x/sum(WgLm$x)
-  WgR <- resid(WgLm)
+  WgLm = nnls(WgCoDsig, WgCoBulk)
+  WgP = WgLm$x/sum(WgLm$x)
+  WgR = resid(WgLm)
 
   # iterate #
   for (j in 1:1000){
 
-    WgGene <- as.numeric(1/(1e-04 + WgR^2 + colSums((WgLm$x * Libr)^2 * t(CoVari))))
+    WgGene = as.numeric(1/(1e-04 + WgR^2 + colSums((WgLm$x * Libr)^2 * t(CoVari))))
 
-    WgCoBulk <- CoBulk * sqrt(WgGene)
-    WgCoDsig <- CoDsig * sqrt(WgGene)
+    WgCoBulk = CoBulk * sqrt(WgGene)
+    WgCoDsig = CoDsig * sqrt(WgGene)
 
-    WgLm <- nnls(WgCoDsig, WgCoBulk)
-    WgPn <- WgLm$x/sum(WgLm$x)
-    WgRn <- resid(WgLm)
+    WgLm = nnls(WgCoDsig, WgCoBulk)
+    WgPn = WgLm$x/sum(WgLm$x)
+    WgRn = resid(WgLm)
 
     # distance lower than 0.01 #
     if (sum(abs(WgPn - WgP)) < 0.01){
-      rm(WgGene,WgCoBulk,WgCoDsig,WgP,WgR,WgPn,WgRn)
+      rm(WgGene, WgCoBulk, WgCoDsig, WgP, WgR, WgPn, WgRn)
       gc()
       return(WgLm)}
 
-    WgP <- WgPn
-    WgR <- WgRn}
+    WgP = WgPn
+    WgR = WgRn}
 
   # max iteration return #
-  rm(WgGene,WgCoBulk,WgCoDsig,WgP,WgR,WgPn,WgRn)
+  rm(WgGene, WgCoBulk, WgCoDsig, WgP, WgR, WgPn, WgRn)
   gc()
-  return(WgLm)}
+  return(WgLm)
+}
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_read 8a03a29901b31176e32928321b1349e6 ##
-MK_read <- function(path){
+MK_read = function(path){
   MTX = Matrix::readMM(paste0(path, "_mt.mtx"))
   MTX_cell = read.csv(paste0(path, "_cell.csv"), header = T, row.names = 1)$x
   MTX_gene = read.csv(paste0(path, "_gene.csv"), header = T, row.names = 1)$x
   MTX@Dimnames = list(MTX_gene, MTX_cell)
   rm(MTX_cell, MTX_gene)
   gc()
-  return(MTX)}
+  return(MTX)
+}
 #
 MK_reads = function(path, IDin = NULL, verbose = T){
   name = gsub(".*/", "", path)
-  if(is.null(IDin)){
+  if(is.null(IDin))
     IDin = unique(gsub("_.*", "", gsub(".* ", "", list.files(path))))
-  }
   MKfiles <- list()
   for (i in 1:max(as.numeric(IDin))) {
     if(verbose){message(" Read MM ", i, MK_time())}
@@ -417,51 +413,55 @@ MK_reads = function(path, IDin = NULL, verbose = T){
 
 ## MK_pie 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_pie <- function(x,Title = "Cell Composition",Size = 3.5){
+MK_pie = function(x, Title = "Cell Composition", Size = 3.5){
   library(ggplot2)
-  Iden <- data.frame(table(x))
-  Iden$Var2 <- factor(c(1:nrow(Iden)))
-  Iden_label <- paste0(as.vector(Iden[,1]), " (", round(Iden$Freq / sum(Iden$Freq) * 100, 2), "%)")
-  pie <- ggplot(Iden, aes(x = "", y = Iden$Freq, fill = Iden$Var2))+geom_bar(stat = "identity")+coord_polar(theta = "y")+labs(x = "", y = "", title = Title)+theme_light()+
+  Iden = data.frame(table(x))
+  Iden$Var2 = factor(c(1:nrow(Iden)))
+  Iden_label = paste0(as.vector(Iden[,1]), " (", round(Iden$Freq / sum(Iden$Freq) * 100, 2), "%)")
+  pie = ggplot(Iden, aes(x = "", y = Iden$Freq, fill = Iden$Var2))+geom_bar(stat = "identity")+coord_polar(theta = "y")+labs(x = "", y = "", title = Title)+theme_light()+
     theme(axis.ticks = element_blank(),axis.text.x = element_blank(),panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
     scale_fill_discrete(breaks = Iden$Var2,labels = Iden_label)+theme(legend.title = element_blank(),plot.title = element_text(hjust = 0.5))+
     geom_text(aes(x = 1.5,y = rev(c(0,cumsum(rev(Iden$Freq))[-length(Iden$Freq)])+rev(Iden$Freq/2)),label = as.vector(Iden$Var2)),size = Size)
-  return(pie)}
+  return(pie)
+}
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_list 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_box <- function(x, Size = 3) {
+MK_box = function(x, Size = 3) {
   library(ggplot2)
-  Data <- list()
+  Data = list()
   for (i in 1:ncol(x)) {
-    Datam <- data.frame(Valu = as.numeric(x[,i]))
-    Datam$Name <- colnames(x)[i]
-    Datam$Cells <- factor(rownames(x),levels = rownames(x))
-    Data[[i]] <- Datam
-    rm(Datam)}
-  Data <- na.omit(do.call(rbind,Data))
-  Box <- ggplot(Data,aes(Cells,Valu))+geom_boxplot(aes(fill = Cells))+geom_point(aes(color = Name),size = Size)+
+    Datam = data.frame(Valu = as.numeric(x[, i]))
+    Datam$Name = colnames(x)[i]
+    Datam$Cells = factor(rownames(x),levels = rownames(x))
+    Data[[i]] = Datam
+    rm(Datam)
+  }
+  Data = na.omit(do.call(rbind,Data))
+  Box = ggplot(Data,aes(Cells,Valu))+geom_boxplot(aes(fill = Cells))+geom_point(aes(color = Name),size = Size)+
     xlab("Cell Type")+ylab("Cell Composition")+scale_x_discrete(labels = substr(unique(Data$Cells),1,6))+theme_light()
-  return(Box)}
+  return(Box)
+}
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_cbind 8a03a29901b31176e32928321b1349e6
 #
-MK_cbind_i <- function(F1, F2){
+MK_cbind_i = function(F1, F2){
   comfr = intersect(rownames(F1), rownames(F2))
   F1 = F1[comfr,]
   F2 = F2[comfr,]
   rm(comfr)
-  return(cbind(F1, F2))}
+  return(cbind(F1, F2))
+}
 #
-MK_cbind_s <- function(F1, F2){
+MK_cbind_s = function(F1, F2){
 
   ## Miss empty ##
-  if(any(dim(F1) == 0)){return(F2)}
-  if(any(dim(F2) == 0)){return(F1)}
+  if(any(dim(F1) == 0)) return(F2)
+  if(any(dim(F2) == 0)) return(F1)
 
   ## Each set ##
   rowall = c(rownames(F1), rownames(F2))
@@ -470,31 +470,35 @@ MK_cbind_s <- function(F1, F2){
     rownames(SF1r) = setdiff(rowall, rownames(F1))
     colnames(SF1r) = colnames(F1)
     F1 = rbind(F1, SF1r)
-    rm(SF1r)}
+    rm(SF1r)
+  }
   if(length(setdiff(rowall, rownames(F2))) > 0){
     SF2r = matrix(0, nrow = length(setdiff(rowall, rownames(F2))), ncol = ncol(F2))
     rownames(SF2r) = setdiff(rowall, rownames(F2))
     colnames(SF2r) = colnames(F2)
     F2 = rbind(F2, SF2r)
-    rm(SF2r)}
-  F2 = F2[rownames(F1),,drop = F]
-  return(cbind(F1, F2))}
+    rm(SF2r)
+  }
+  F2 = F2[rownames(F1), , drop = F]
+  return(cbind(F1, F2))
+}
 #
 ## 8a03a29901b31176e32928321b1349e6
 
 ## MK_fix 8a03a29901b31176e32928321b1349e6
 #
-MK_fix <- function(x,Fix){
-  Fname = setdiff(rownames(Fix),rownames(x))
-  fr = matrix(0,ncol = ncol(x),nrow = length(Fname),dimnames = list(Fname,colnames(x)))
-  fr = rbind(x,fr)
-  return(fr)}
+MK_fix = function(x, Fix){
+  Fname = setdiff(rownames(Fix), rownames(x))
+  fr = matrix(0, ncol = ncol(x), nrow = length(Fname), dimnames = list(Fname, colnames(x)))
+  fr = rbind(x, fr)
+  return(fr)
+}
 #
 ## 8a03a29901b31176e32928321b1349e6
 
 ## MK_toMM 8a03a29901b31176e32928321b1349e6
 #
-MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T, MiniFname = T, Sp = 1, verbose = F, name = "temp"){
+MK_toMM = function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T, MiniFname = T, Sp = 1, verbose = F, name = "temp"){
   
   # Change sign #
   if(verbose){
@@ -613,10 +617,8 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
     message("Dealing feature name ...", MK_time())
     RowN = grep("-[0-9]$", rownames(x), value = T)
     if(length(RowN) > 0){
-      if(verbose){print(RowN[1:6])}
-      if(!any(installed.packages() %in% "dplyr")){
-        install.packages("dplyr")
-      }
+      if(verbose) print(RowN[1:6])
+      if(!any(installed.packages() %in% "dplyr")) install.packages("dplyr")
       suppressMessages(library(dplyr))
       Temp = data.frame(as.matrix(x[RowN,]))
       ReTemp = list()
@@ -647,12 +649,8 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
       }
       Temp = as.matrix(do.call(cbind, ReTemp))
       rm(ReTemp)
-      if(any(grepl("dgC", as.character(class(x))))){
-        Temp = as(Temp, "dgCMatrix")
-      }
-      if(any(grepl("dgT", as.character(class(x))))){
-        Temp = as(Temp, "dgTMatrix")
-      }
+      if(any(grepl("dgC", as.character(class(x))))) Temp = as(Temp, "dgCMatrix")
+      if(any(grepl("dgT", as.character(class(x))))) Temp = as(Temp, "dgTMatrix")
       x = x[!rownames(x) %in% RowN,]
       colnames(Temp) = colnames(x)
       x = rbind(x, Temp)
@@ -663,49 +661,49 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
   
   # HK batch remove #
   if(HK_bm){
-    if(verbose){print(x[1:7, 1:7])}
+    if(verbose) print(x[1:7, 1:7])
     
     # Cell library #
-    lib <- apply(x, 2, sum)
+    lib = apply(x, 2, sum)
     
     # HK genes #
-    HKs <- c("CFL1","RPS15A","RPL38","RPL28","FAU","RPL35A","RPL39","RPL23","RPLP2","RPS23")
-    HKbm <- x[HKs,]
+    HKs = c("CFL1","RPS15A","RPL38","RPL28","FAU","RPL35A","RPL39","RPL23","RPLP2","RPS23")
+    HKbm = x[HKs,]
     
     # Predict with library #
-    HKbm <- sweep(HKbm, 2, lib, FUN = "/")
+    HKbm = sweep(HKbm, 2, lib, FUN = "/")
     for (i in 1:nrow(HKbm)) {
-      if(verbose){print(paste(rownames(HKbm)[i],i,sum(as.numeric(HKbm[i,]) == 0),median(as.numeric(HKbm[i,HKbm[i,] != 0]))))}
+      if(verbose) print(paste(rownames(HKbm)[i],i,sum(as.numeric(HKbm[i,]) == 0),median(as.numeric(HKbm[i,HKbm[i,] != 0]))))
       
       # By median #
-      HKbm[i,as.numeric(HKbm[i,]) == 0] <- median(as.numeric(HKbm[i,HKbm[i,] != 0]))
+      HKbm[i, as.numeric(HKbm[i,]) == 0] = median(as.numeric(HKbm[i,HKbm[i,] != 0]))
       
-      if(verbose){print(paste(i,sum(as.numeric(HKbm[i,]) == 0),median(as.numeric(HKbm[i,HKbm[i,] != 0]))))}}
+      if(verbose) print(paste(i,sum(as.numeric(HKbm[i,]) == 0),median(as.numeric(HKbm[i,HKbm[i,] != 0]))))
+     }
+    
     
     # Focus by mean #
-    HKbm <- apply(HKbm, 2, mean)
+    HKbm = apply(HKbm, 2, mean)
     
     # Normal matrix #
-    x <- sweep(x,2,HKbm/mean(HKbm),FUN = "/")
+    x = sweep(x, 2, HKbm/mean(HKbm), FUN = "/")
     
-    if(verbose){print(x[1:7,1:7])}
-    rm(HKbm,HKs,lib)
-    gc()}
+    if(verbose) print(x[1:7,1:7])
+    rm(HKbm, HKs, lib)
+    gc()
+  }
   
   # Save by dgTMatrix #
   col = colnames(x)
   row = rownames(x)
   if(MKrcpp){
     x = as(MK_asMatr(x), "dgTMatrix")
-  }else{
+  }else
     x = as(as.matrix(x), "dgTMatrix")
-  }
   
   write.csv(col, paste0(name, "_cell.csv"))
   write.csv(row, paste0(name, "_gene.csv"))
   Matrix::writeMM(x, paste0(name, "_mt.mtx"))
-  
-  rm(x)
   gc()
 }
 #
@@ -713,31 +711,27 @@ MK_toMM <- function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T
 
 ## MK_read10X 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefile = "gene", Exprfile = "matrix", View = T, Save = T){
+MK_read10X = function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefile = "gene", Exprfile = "matrix", View = T, Save = T){
 
   ## Check dir ##
-  if(!dir.exists(MKdir)){
-    stop("There is no target dir exist!", MK_time())
-  }
+  if(!dir.exists(MKdir)) stop("There is no target dir exist!", MK_time())
 
   ## IDin ##
   if(is.null(IDin)){
     IDin = gsub("_.*", "", list.files(MKdir))
     IDin = names(table(IDin))[table(IDin) > 2]
-    if(length(IDin) == 0){
-      IDin = "."
-    }
+    if(length(IDin) == 0) IDin = "."
   }
 
   ## IDname ##
   IDname = c(Barfile, Genefile, Exprfile)
-  if(View){message("MK read10X! Now we working on: ", MKdir, MK_time())}
+  if(View) message("MK read10X! Now we working on: ", MKdir, MK_time())
 
   ## Check File names ##
   File_name = list()
   for (i in 1:3) {
     File_name[[i]] = grep(IDname[i], list.files(MKdir), value = T)
-    if(!length(File_name[[i]]) > 0){stop("No files matched by your ", IDname[i], " name !", MK_time())}
+    if(!length(File_name[[i]]) > 0) stop("No files matched by your ", IDname[i], " name !", MK_time())
   }
 
   ## Check IDin ##
@@ -745,13 +739,13 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
   for (i in 1:length(IDin)) {
 
     ## In each ID ##
-    if(View){message(i, " Now we process: ", IDin[i], MK_time())}
+    if(View) message(i, " Now we process: ", IDin[i], MK_time())
 
     ## Check files ##
     File_nameI = list()
     for (j in 1:3) {
       File_nameI[[j]] = grep(IDin[i], File_name[[j]], value = T)
-      if(length(File_nameI[[j]]) != 1){stop("Your < ", IDin[i], " > in ID is not unique or cannot match for files !", MK_time())}
+      if(length(File_nameI[[j]]) != 1) stop("Your < ", IDin[i], " > in ID is not unique or cannot match for files !", MK_time())
     }
 
     ## Read Barcode ##
@@ -762,7 +756,7 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
     Ig = NULL
     if(ncol(Gene) > 2){
       Ig = Gene$V3
-      if(Save){write.csv(Ig, paste0(IDin[i], MK_time(), "_Ig.csv"))}
+      if(Save) write.csv(Ig, paste0(IDin[i], MK_time(), "_Ig.csv"))
     }
 
     ## Read Expr ##
@@ -787,13 +781,11 @@ MK_read10X <- function(MKdir = getwd(), IDin = NULL, Barfile = "barcode", Genefi
 
 ## MK_scRNA 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c(200, Inf), nVar = 3, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T, MinMem = T){
-  if(!any(installed.packages() %in% "Seurat")){
-    install.packages("Seurat")
-  }
+MK_scRNA = function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c(200, Inf), nVar = 3, Dim = 2, SCT = F, BatchRemove = F, Umap = F, Plot = T, Norm = T, save = T, MinMem = T){
+  if(!any(installed.packages() %in% "Seurat")) install.packages("Seurat")
   suppressMessages(library(Seurat))
 
-  if(is.null(name)){name = "temp"}
+  if(is.null(name)) name = "temp"
   name = as.character(name)
   
   ## Creat Seurat v3.2 ##
@@ -813,7 +805,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c
     message("Nice Your nCount cut off: ", paste(nCount, collapse = " "), MK_time())
   }
   x = x[, x$nFeature_RNA >= nGene[1] & x$nFeature_RNA <= nGene[2] & x$nCount_RNA >= nCount[1] & x$nCount_RNA <= nCount[2]]
-  if(Plot){message("Matrix dim: ", paste(dim(x), collapse = " "), MK_time())}
+  if(Plot) message("Matrix dim: ", paste(dim(x), collapse = " "), MK_time())
 
   ## If SCTransform ##
   if(SCT){
@@ -822,11 +814,11 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c
   }else{
     ## Standard process ##
     ## Normalize ##
-    if(Norm){x = NormalizeData(x, verbose = Plot)}
+    if(Norm) x = NormalizeData(x, verbose = Plot)
 
     ## Find varible ##
     x = FindVariableFeatures(x, nfeatures = 1000*nVar)
-    if(Plot){print(LabelPoints(VariableFeaturePlot(x), points = head(VariableFeatures(x), 10), repel = T))}
+    if(Plot) print(LabelPoints(VariableFeaturePlot(x), points = head(VariableFeatures(x), 10), repel = T))
 
     ## Scale data ##
     x = ScaleData(x, features = rownames(x), verbose = Plot)
@@ -840,9 +832,7 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c
 
     ## Harmony v1.0 ##
     if(!any(installed.packages() %in% "harmony")){
-      if(!any(installed.packages() %in% "devtools")){
-        install.packages("devtools")
-      }
+      if(!any(installed.packages() %in% "devtools")) install.packages("devtools")
       devtools::install_github("immunogenomics/harmony")
     }
     suppressMessages(library(harmony))
@@ -853,36 +843,33 @@ MK_scRNA <- function(x, name = NULL, Reso = 0.8, nGene = c(200, Inf), nCount = c
   ## TSNE and UMAP ##
   ARedu = ifelse(BatchRemove, "harmony", "pca")
   x = RunTSNE(x, dims = 1:50, dim.embed = Dim, reduction = ARedu)
-  if(Umap){x = RunUMAP(x, dims = 1:50, n.components = Dim, reduction = ARedu, verbose = Plot)}
+  if(Umap) x = RunUMAP(x, dims = 1:50, n.components = Dim, reduction = ARedu, verbose = Plot)
 
   ## SNN ##
   x = FindNeighbors(x, dims = 1:50, reduction = ARedu, verbose = Plot)
   x = FindClusters(x, resolution = Reso, verbose = Plot)
 
-  if(Plot){print(DimPlot(x, label = T, pt.size = 0.9))}
+  if(Plot) print(DimPlot(x, label = T, pt.size = 0.9))
 
   ## Save ##
   if(save){
     dir.create("backup")
-    saveRDS(x, paste0("backup/", name, MK_time(), "_backup.rds"))}
+    saveRDS(x, paste0("backup/", name, MK_time(), "_backup.rds"))
+  }
   gc()
   message("MK_scRNA process well done !!!", MK_time())
-
   return(x)
 }
 #
 MK_spatial = function(Dir = getwd(), name = NULL, Reso = 0.6, Verbose = T, save = T){
   
-  if(!any(installed.packages() %in% "Seurat")){
-    install.packages("Seurat")
-  }
+  if(!any(installed.packages() %in% "Seurat")) install.packages("Seurat")
   suppressMessages(library(Seurat))
   
-  if(is.null(name)){name = "temp"}
+  if(is.null(name)) name = "temp"
   name = as.character(name)
   
-  x = Load10X_Spatial(Dir, to.upper = T, 
-                            filename = grep("matrix.h5", list.files(Dir), value = T))
+  x = Load10X_Spatial(Dir, to.upper = T, filename = grep("matrix.h5", list.files(Dir), value = T))
   x = SCTransform(x, assay = "Spatial", verbose = Verbose)
   x = RunPCA(x, verbose = F)
   x = RunTSNE(x, dims = 1:50)
@@ -890,14 +877,13 @@ MK_spatial = function(Dir = getwd(), name = NULL, Reso = 0.6, Verbose = T, save 
   x = FindNeighbors(x)
   x = FindClusters(x, resolution = Reso)
   
-  if(Verbose){print(DimPlot(x, label = T) + SpatialDimPlot(x, label = T))}
+  if(Verbose) print(DimPlot(x, label = T) + SpatialDimPlot(x, label = T))
   
   if(save){
     dir.create("backup")
-    saveRDS(x, paste0("backup/", name, MK_time(), "_backup.rds"))}
-  gc()
+    saveRDS(x, paste0("backup/", name, MK_time(), "_backup.rds"))
+  }
   message("MK_Spatial process well done !!!", MK_time())
-  
   return(x)
 }
 #
@@ -907,33 +893,29 @@ MK_spatial = function(Dir = getwd(), name = NULL, Reso = 0.6, Verbose = T, save 
 #
 MK_singler = function(x, Ref = c("HPCA", "BPED", "DICE")[1], mode = c("main", "fine")[1], cluster = NULL, Cells = 10, name = NULL, Save = T){
   
-  if(is.null(name)){name = "temp"}
+  if(is.null(name)) name = "temp"
   name = as.character(name)
   
   if(!any(installed.packages() %in% "celldex")){
-    if(!any(installed.packages() %in% "BiocManager")){
-      install.packages("BiocManager")
-    }
+    if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
     BiocManager::install("celldex")
   }
   suppressMessages(library(celldex))
   
   if(!any(installed.packages() %in% "SingleR")){
-    if(!any(installed.packages() %in% "BiocManager")){
-      install.packages("BiocManager")
-    }
+    if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
     BiocManager::install("SingleR")
   }
   suppressMessages(library(SingleR))
   
-  if(Ref == "HPCA"){ref = celldex::HumanPrimaryCellAtlasData()}
-  if(Ref == "BPED"){ref = celldex::BlueprintEncodeData()}
-  if(Ref == "DICE"){ref = celldex::DatabaseImmuneCellExpressionData()}
+  if(Ref == "HPCA") ref = celldex::HumanPrimaryCellAtlasData()
+  if(Ref == "BPED") ref = celldex::BlueprintEncodeData()
+  if(Ref == "DICE") ref = celldex::DatabaseImmuneCellExpressionData()
   
-  if(mode == "main"){ref_l = ref$label.main}
-  if(mode == "fine"){ref_l = ref$label.fine}
+  if(mode == "main") ref_l = ref$label.main
+  if(mode == "fine") ref_l = ref$label.fine
   
-  if(!is.null(cluster)){cluster = as.character(cluster)}
+  if(!is.null(cluster)) cluster = as.character(cluster)
   Labels = list()
   i = 1
   
@@ -958,9 +940,8 @@ MK_singler = function(x, Ref = c("HPCA", "BPED", "DICE")[1], mode = c("main", "f
   Labels = as.character(do.call(c, Labels))
   rm(ref, ref_l)
   
-  if(Save){
-    write.csv(Labels, paste0(name, MK_time(),".csv"), row.names = F, quote = T)
-  }
+  if(Save)
+    write.csv(Labels, paste0(name, MK_time(), ".csv"), row.names = F, quote = T)
   return(Labels)
 }
 #
@@ -968,27 +949,19 @@ MK_singler = function(x, Ref = c("HPCA", "BPED", "DICE")[1], mode = c("main", "f
 
 ## MK_Enrich 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.3){
+MK_Enrich = function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.3){
   
   if(!any(installed.packages() %in% "clusterProfiler")){
-    if(!any(installed.packages() %in% "BiocManager")){
-      install.packages("BiocManager")
-    }
+    if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
     BiocManager::install("clusterProfiler")
   }
   if(!any(installed.packages() %in% "ReactomePA")){
-    if(!any(installed.packages() %in% "BiocManager")){
-      install.packages("BiocManager")
-    }
+    if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
     BiocManager::install("ReactomePA")
   }
-  if(!any(installed.packages() %in% "ggplot2")){
-    install.packages("ggplot2")
-  }
+  if(!any(installed.packages() %in% "ggplot2")) install.packages("ggplot2")
   if(!any(installed.packages() %in% "org.Hs.eg.db")){
-    if(!any(installed.packages() %in% "BiocManager")){
-      install.packages("BiocManager")
-    }
+    if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
     BiocManager::install("org.Hs.eg.db")
   }
   suppressMessages(library(clusterProfiler))
@@ -1006,30 +979,27 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
   setwd(EnID)
   message("Now working in ", getwd(), MK_time())
   GeneID = bitr(gsub("^MT\\.","MT-",x), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
-  if(Save){write.csv(GeneID, paste0(EnID, MK_time(), "_GeneID.csv"))}
+  if(Save) write.csv(GeneID, paste0(EnID, MK_time(), "_GeneID.csv"))
 
   ## GO ##
   GoRE = data.frame(tryCatch(
     enrichGO(gene = as.character(GeneID[,2]), "org.Hs.eg.db", ont = "ALL", pAdjustMethod = "BH", minGSSize = 3, pvalueCutoff = CutP, readable = TRUE),
     error = function(e) data.frame()))
-  if(Save){write.csv(GoRE, paste0(EnID, MK_time(), "_GoRE.csv"))}
+  if(Save) write.csv(GoRE, paste0(EnID, MK_time(), "_GoRE.csv"))
   if(nrow(GoRE) > 0){
     GoRE = na.omit(GoRE[c(which(GoRE$ONTOLOGY == "BP")[1:10], which(GoRE$ONTOLOGY == "CC")[1:10], which(GoRE$ONTOLOGY == "MF")[1:10]),])
     GoRE = GoRE[order(GoRE$Count),]
 
     ## plot ##
-    if(!any(installed.packages() %in% "stringr")){
-      install.packages("stringr")
-    }
+    if(!any(installed.packages() %in% "stringr")) install.packages("stringr")
     suppressMessages(library(stringr))
-    GoPlot = ggplot(GoRE,
-                     aes(GoRE$Count/length(as.character(GeneID[,2])), factor(GoRE$Description, levels = GoRE$Description)))+
+    GoPlot = ggplot(GoRE, aes(GoRE$Count/length(as.character(GeneID[,2])), factor(GoRE$Description, levels = GoRE$Description)))+
       geom_point(aes(size = GoRE$Count, color = -1*log10(GoRE$qvalue), shape = GoRE$ONTOLOGY))+
       scale_colour_gradient(low = "blue", high = "red")+
       labs(color = expression(-log[10](Qvalue)), size = "Gene number", shape = "Ontology", x = "GeneRatio", y = NULL, title = "GO enrichment")+
       theme_bw() + theme(plot.title = element_text(hjust = 0.5, size = 15), axis.text.y = element_text(size = 12))+
       scale_y_discrete(labels = function(x) str_wrap(x, width = 50))
-    if(Save){ggsave(paste0(EnID, MK_time(), ".tiff"), plot = GoPlot, device = "tiff", width = Wid, height = Hig)}
+    if(Save) ggsave(paste0(EnID, MK_time(), ".tiff"), plot = GoPlot, device = "tiff", width = Wid, height = Hig)
     rm(GoPlot)
   }
   gc()
@@ -1040,17 +1010,14 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
     error = function(e) data.frame()))
   if(nrow(KeRE) > 0){
     Ncol = ncol(KeRE)
-    for (i in 1:nrow(KeRE)) {
+    for (i in 1:nrow(KeRE))
       KeRE[i,Ncol+1] = paste(as.character(GeneID[,1])[GeneID[,2] %in% strsplit(KeRE$geneID,"/")[[i]]],collapse = "/")
-    }
     rm(Ncol,i)
 
     ## plot ##
     if(Save){
       if(!any(installed.packages() %in% "pathview")){
-        if(!any(installed.packages() %in% "BiocManager")){
-          install.packages("BiocManager")
-        }
+        if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
         BiocManager::install("pathview")
       }
       suppressMessages(library(pathview))
@@ -1058,25 +1025,26 @@ MK_Enrich <- function(x, EnID = "temp", CutP = 0.01, Save = T, Wid = 8, Hig = 8.
       rm(bods, gene.idtype.bods, gene.idtype.list, cpd.simtypes, korg)
     }
   }
-  if(Save){write.csv(KeRE, paste0(EnID, MK_time(), "_KeRE.csv"))}
+  if(Save) write.csv(KeRE, paste0(EnID, MK_time(), "_KeRE.csv"))
   gc()
 
   ## ReactPA ##
   PaRE = data.frame(tryCatch(
     enrichPathway(gene = as.character(GeneID[,2]), pvalueCutoff = CutP, organism = "human", readable = T)@result,
     error = function(e) data.frame()))
-  if(Save){write.csv(PaRE, paste0(EnID, MK_time(), "_PaRE.csv"))}
+  if(Save) write.csv(PaRE, paste0(EnID, MK_time(), "_PaRE.csv"))
   gc()
 
   ## Return ##
   setwd(path)
-  return(list(GoRE, KeRE, PaRE))}
+  return(list(GoRE, KeRE, PaRE))
+}
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_toMMs 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T, MiniFname = T){
+MK_toMMs = function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T, MIR_rm = T, ATP_rm = T, IGXV_rm = T, MiniFname = T){
   name = as.character(name)
   dir.create(name)
 
@@ -1103,13 +1071,12 @@ MK_toMMs <- function(x, name = "temp", Cells = 10, verbose = T, HK_bm = F, Mito_
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_TCGA 8a03a29901b31176e32928321b1349e6 ##
-MK_Tcga_CanerFilt <- function(x, cancer = T, save = F, name = "temp"){
-  if(sum(duplicated(substr(colnames(x),1,12)))>0){
-    x <- x[,colnames(x) %in% sort(colnames(x))[!duplicated(substr(sort(colnames(x)),1,12))]]
-  }
-  Can<-x[,which(substr(colnames(x),14,14) == "0")]
-  Nor<-x[,which(substr(colnames(x),14,14) == "1")]
-  colnames(Can) <- gsub("\\.","_",substr(toupper(colnames(Can)),1,12))
+MK_Tcga_CanerFilt = function(x, cancer = T, save = F, name = "temp"){
+  if(sum(duplicated(substr(colnames(x),1,12)))>0)
+    x = x[, colnames(x) %in% sort(colnames(x))[!duplicated(substr(sort(colnames(x)), 1, 12))]]
+  Can = x[, which(substr(colnames(x),14,14) == "0")]
+  Nor = x[, which(substr(colnames(x),14,14) == "1")]
+  colnames(Can) = gsub("\\.", "_", substr(toupper(colnames(Can)), 1, 12))
   if(save){
     write.csv(Can,paste0(name,"_Tcga_Cancer.csv"))
     write.csv(Nor,paste0(name,"_Tcga_Normal.csv"))
@@ -1123,12 +1090,10 @@ MK_Tcga_CanerFilt <- function(x, cancer = T, save = F, name = "temp"){
   }
 }
 #
-MK_DEGs <- function(x, y, filt = T, log2FC = 2, padj = 0.01, pval = 0.01, save = T, Order = T, name = "temp"){
+MK_DEGs = function(x, y, filt = T, log2FC = 2, padj = 0.01, pval = 0.01, save = T, Order = T, name = "temp"){
   options(stringsAsFactors = F)
   if(!any(installed.packages() %in% "limma")){
-    if(!any(installed.packages() %in% "BiocManager")){
-      install.packages("BiocManager")
-    }
+    if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
     BiocManager::install("limma")
   }
   suppressMessages(library(limma))
@@ -1138,49 +1103,51 @@ MK_DEGs <- function(x, y, filt = T, log2FC = 2, padj = 0.01, pval = 0.01, save =
   fit = eBayes(contrasts.fit(lmFit(Data, Group), Sig))
   OP = na.omit(topTable(fit, number = nrow(Data), coef = 1, adjust = "BH"))
   rm(Data, Group, Sig, fit)
-  colnames(OP) = c("LogFC","AveExpr","T","P_val","P_adj","B")
-  OP$MeanP = apply(x,1,mean)
-  OP$MedianP = apply(x,1,median)
-  OP$MeanN = apply(y,1,mean)
-  OP$MedianN = apply(y,1,median)
-  if(filt){OP = subset(OP, P_adj < padj & abs(LogFC) > log2FC)}
+  colnames(OP) = c("LogFC", "AveExpr", "T", "P_val", "P_adj", "B")
+  OP$MeanP = apply(x, 1, mean)
+  OP$MedianP = apply(x, 1, median)
+  OP$MeanN = apply(y, 1, mean)
+  OP$MedianN = apply(y, 1, median)
+  if(filt) OP = subset(OP, P_adj < padj & abs(LogFC) > log2FC)
   OP$Sig = "NO"
   OP$Sig[OP$P_val < 0.05] = "Yes"
   OP$State = "None"
   OP$State[OP$LogFC > 0] = "Up"
   OP$State[OP$LogFC < 0] = "Down"
-  if(Order){OP = OP[order(abs(OP$LogFC), decreasing = T),]}
-  if(save){write.csv(OP, paste0(name, MK_time(), "_DEGs.csv"))}
+  if(Order) OP = OP[order(abs(OP$LogFC), decreasing = T),]
+  if(save) write.csv(OP, paste0(name, MK_time(), "_DEGs.csv"))
   return(OP)
 }
 #
-MK_DEGplot <- function(x,Title = "temp",pvalue = 0.01,log2FC = 2,plimit = 30,log2limit = 5,color = 3,Lima = F,adj = T){
+MK_DEGplot = function(x,Title = "temp",pvalue = 0.01,log2FC = 2,plimit = 30,log2limit = 5,color = 3,Lima = F,adj = T){
   library(ggplot2)
   if(Lima){
-    if(adj){colnames(x) <- c("log2FoldChange","AveExpr","t","p","padj","B")}
-    else{colnames(x) <- c("log2FoldChange","AveExpr","t","padj","p","B")}}
-  x$Legend <- as.factor(ifelse(x$padj < pvalue & abs(x$log2FoldChange) >= log2FC, ifelse(x$log2FoldChange > log2FC,'Up','Down'),'Not'))
-  if(color == 3){colornum <- c("blue", "black", "red")}
-  if(color == 2){colornum <- c("black", "red")}
-  DEp <- ggplot(data = x,aes(x = log2FoldChange, y = -log10(padj),colour = Legend))+ggtitle(Title)+
-    xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept = c(-log2FC,log2FC),lty = 6,col = "grey",lwd = 0.5)+
-    geom_hline(yintercept = -log10(pvalue),lty = 4,col = "grey",lwd = 0.5)+scale_color_manual(values = colornum)+theme(legend.position = "right")+theme_bw()+
-    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit)+ylim(0,plimit)+
-    theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2)
+    if(adj){
+      colnames(x) <- c("log2FoldChange","AveExpr","t","p","padj","B")
+    }else
+      colnames(x) <- c("log2FoldChange","AveExpr","t","padj","p","B")
+  }
+  x$Legend = as.factor(ifelse(x$padj < pvalue & abs(x$log2FoldChange) >= log2FC, ifelse(x$log2FoldChange > log2FC, 'Up', 'Down'), 'Not'))
+  if(color == 3) colornum = c("blue", "black", "red")
+  if(color == 2) colornum = c("black", "red")
+  DEp = ggplot(data = x, aes(x = log2FoldChange, y = -log10(padj),colour = Legend)) + ggtitle(Title) +
+    xlab("log2 Foldchange") + ylab("-log10 Padj") + geom_vline(xintercept = c(-log2FC, log2FC), lty = 6, col = "grey", lwd = 0.5) +
+    geom_hline(yintercept = -log10(pvalue), lty = 4, col = "grey", lwd = 0.5) + scale_color_manual(values = colornum) + theme(legend.position = "right") + theme_bw() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.title = element_blank()) + xlim(-log2limit, log2limit) + ylim(0, plimit) +
+    theme(plot.title = element_text(hjust = 0.5)) + geom_point(alpha=0.4, size=1.2)
   return(DEp)
 }
 ##
 
 ## MK_rem0 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_rem0 <- function(x, Rem0 = 0.1, raito = T, nsep = 5){
+MK_rem0 = function(x, Rem0 = 0.1, raito = T, nsep = 5){
   Mat = MK_asNum(x, nsep = nsep)
   r = apply(Mat, 1, function(i) sum(i == 0))
   if(raito){
     ok = which(r <= dim(Mat)[2]*Rem0)
-  }else{
+  }else
     ok = which(r <= Rem0)
-  }
   rm(r, Mat)
   x = x[ok,]
   rm(ok)
@@ -1191,19 +1158,16 @@ MK_rem0 <- function(x, Rem0 = 0.1, raito = T, nsep = 5){
 
 ## MK_WGCNA 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
-  if(!any(installed.packages() %in% "WGCNA")){
-    install.packages("WGCNA")
-  }
+MK_WG_Tom = function(x, name = "temp", nGene = 10000, Save = T){
+  if(!any(installed.packages() %in% "WGCNA")) install.packages("WGCNA")
   suppressMessages(library(WGCNA))
-  if(nGene > 14000){stop("Sorry Memory Size Crush when nGene over 14000.")}
-
+  if(nGene > 14000) stop("Sorry Memory Size Crush when nGene over 14000.")
+  
   ## Filt virable genes ##
   if(nGene < nrow(x)){
     x = t(x[order(apply(x, 1, mad), decreasing = T)[1:nGene],])
-  }else{
+  }else
     x = t(x)
-  }
 
   ## Check genes and samples ##
   gsg = goodSamplesGenes(x)
@@ -1214,7 +1178,7 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
   sft = pickSoftThreshold(x, blockSize = 15000)
   okpower = sft$powerEstimate
   rm(sft)
-  if(is.na(okpower)){stop("No okpower !")}
+  if(is.na(okpower)) stop("No okpower !")
 
   ## Make net ##
   net = blockwiseModules(x, power = okpower, numericLabels = T, saveTOMs = T, saveTOMFileBase = paste(name, "WGTOM"), maxBlockSize = 15000)
@@ -1253,60 +1217,58 @@ MK_WG_Tom <- function(x, name = "temp", nGene = 10000, Save = T){
   return(RE)
 }
 #
-MK_WG_CliIn <- function(Clin,WG_Tom,name = "temp",color = "ALL",classname = "ALL",Cys = T){
-  if(!any(installed.packages() %in% "WGCNA")){
-    install.packages("WGCNA")
-  }
+MK_WG_CliIn = function(Clin,WG_Tom,name = "temp",color = "ALL",classname = "ALL",Cys = T){
+  if(!any(installed.packages() %in% "WGCNA")) install.packages("WGCNA")
   suppressMessages(library(WGCNA))
-  if(any(color == "ALL")){color = substring(names(WG_Tom[[2]]), 3)}
-  if(any(classname == "ALL")){classname = colnames(Clin)}
+  if(any(color == "ALL")) color = substring(names(WG_Tom[[2]]), 3)
+  if(any(classname == "ALL")) classname = colnames(Clin)
 
   ## MM and GS ##
-  weight <- data.frame(Clin[,classname])
-  names(weight) <- classname
-  modNames <- substring(names(WG_Tom[[2]]), 3)
-  MM <- cor(WG_Tom[[1]], WG_Tom[[2]], use = "p")
-  MM_P <- corPvalueStudent(MM, nrow(Clin))
-  colnames(MM)<- paste("MM", modNames)
-  colnames(MM_P) <- paste("P-MM", modNames)
-  GS <- cor(WG_Tom[[1]], weight, use = "p")
-  GS_P <- corPvalueStudent(as.matrix(GS), nrow(Clin))
-  colnames(GS) <- paste("GS", colnames(weight))
-  colnames(GS_P) <- paste("P-GS", colnames(weight))
+  weight = data.frame(Clin[,classname])
+  names(weight) = classname
+  modNames = substring(names(WG_Tom[[2]]), 3)
+  MM = cor(WG_Tom[[1]], WG_Tom[[2]], use = "p")
+  MM_P = corPvalueStudent(MM, nrow(Clin))
+  colnames(MM) = paste("MM", modNames)
+  colnames(MM_P) = paste("P-MM", modNames)
+  GS = cor(WG_Tom[[1]], weight, use = "p")
+  GS_P = corPvalueStudent(as.matrix(GS), nrow(Clin))
+  colnames(GS) = paste("GS", colnames(weight))
+  colnames(GS_P) = paste("P-GS", colnames(weight))
 
   ## Save ##
-  write.csv(MM,paste(name,"WG_MM.csv"))
-  write.csv(MM_P,paste(name,"WG_MM_P.csv"))
-  write.csv(GS,paste(name,"WG_GS.csv"))
-  write.csv(GS_P,paste(name,"WG_GS_P.csv"))
-  rm(weight,MM_P,GS_P)
+  write.csv(MM, paste(name, "WG_MM.csv"))
+  write.csv(MM_P, paste(name, "WG_MM_P.csv"))
+  write.csv(GS, paste(name, "WG_GS.csv"))
+  write.csv(GS_P, paste(name, "WG_GS_P.csv"))
+  rm(weight, MM_P, GS_P)
 
   ## MMGS Plot ##
-  ModGenes <- list()
+  ModGenes = list()
   for (i in 1:length(color)) {
-    column <- match(color[i], modNames)
+    column = match(color[i], modNames)
     for (j in 1:length(classname)) {
-      tiff(paste(name,color[i],classname[j],"WG_MMGS.tiff"),width = 700,height = 550,pointsize = 15,compression = "lzw")
+      tiff(paste(name, color[i], classname[j], "WG_MMGS.tiff"), width = 700, height = 550, pointsize = 15, compression = "lzw")
       verboseScatterplot(abs(MM[WG_Tom[[3]] == color[i], column]), abs(GS[WG_Tom[[3]] == color[i], j]),
                          xlab = paste("Module Membership in", color[i], "module"), ylab = paste("Gene significance for", classname[j]),
-                         abline = 1,abline.lty = 1,abline.color = "red",main = paste("Module membership vs. Gene significance\n"),
+                         abline = 1, abline.lty = 1, abline.color = "red", main = paste("Module membership vs. Gene significance\n"),
                          cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = "black")
       dev.off()
     }
 
     ## Cys ##
-    inModule <- is.finite(match(WG_Tom[[3]], color[i]))
-    modGenes <- colnames(WG_Tom[[1]])[inModule]
+    inModule = is.finite(match(WG_Tom[[3]], color[i]))
+    modGenes = colnames(WG_Tom[[1]])[inModule]
     if(Cys){
-      modTOM <- as.matrix(WG_Tom[[5]])[inModule, inModule]
-      dimnames(modTOM) <- list(modGenes,modGenes)
-      cys <- exportNetworkToCytoscape(modTOM,threshold = 0.05,edgeFile = paste(name,"edges",color[i],"WG_Cys.txt"),nodeFile = paste(name,"nodes",color[i],"WG_Cys.txt"),
+      modTOM = as.matrix(WG_Tom[[5]])[inModule, inModule]
+      dimnames(modTOM) = list(modGenes, modGenes)
+      cys = exportNetworkToCytoscape(modTOM, threshold = 0.05, edgeFile = paste(name, "edges", color[i], "WG_Cys.txt"), nodeFile = paste(name, "nodes", color[i], "WG_Cys.txt"),
                                       nodeNames = modGenes, nodeAttr = WG_Tom[[3]][inModule])
-      modGenes <- cys$nodeData$nodeName
-      rm(modTOM,cys)
+      modGenes = cys$nodeData$nodeName
+      rm(modTOM, cys)
     }
-    ModGenes <- c(ModGenes,list(modGenes))
-    rm(inModule,column,modGenes)
+    ModGenes = c(ModGenes, list(modGenes))
+    rm(inModule, column, modGenes)
   }
 
   ## Return ##
@@ -1338,8 +1300,8 @@ MK_asNum = function(x, nsep = 5, verbose = T){
     z = i * sp
     mt = apply(x[, a:z], 2, as.numeric)
     Re[[i]] = as(mt, "dgCMatrix")
-    if(verbose){message("Num: ", a, " to ", z, MK_time())}
-    rm(a,z,mt)
+    if(verbose) message("Num: ", a, " to ", z, MK_time())
+    rm(a, z, mt)
   }
   i = i + 1
   # remain #
@@ -1347,7 +1309,7 @@ MK_asNum = function(x, nsep = 5, verbose = T){
     a = (i-1) * sp + 1
     mt = apply(x[, a:ncol(x), drop = F], 2, as.numeric)
     Re[[i]] = as(mt, "dgCMatrix")
-    if(verbose){message("Num: ex ", a, " to ", ncol(x), MK_time())}
+    if(verbose) message("Num: ex ", a, " to ", ncol(x), MK_time())
     rm(a,mt)
   }
   # cbind #
@@ -1362,51 +1324,42 @@ MK_asNum = function(x, nsep = 5, verbose = T){
 
 ## MK_Functions 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_Exct <- function(x, filed = 1, exct = "\\|", verbose = F){
-  if(verbose){message("Before: ", x[1], MK_time())}
-  x <- sapply(strsplit(x, exct), function(i) i[[filed]])
-  if(verbose){message("After: ", x[1], MK_time())}
+MK_Exct = function(x, filed = 1, exct = "\\|", verbose = F){
+  if(verbose) message("Before: ", x[1], MK_time())
+  x = sapply(strsplit(x, exct), function(i) i[[filed]])
+  if(verbose) message("After: ", x[1], MK_time())
   return(x)
 }
 #
-MK_FPKMtoTPM <- function(x){
-  x = data.frame(apply(x, 2, function(i) exp(log(i) - log(sum(i)) + log(1e+06))))
-  return(x)}  
+MK_FPKMtoTPM = function(x) x = data.frame(apply(x, 2, function(i) exp(log(i) - log(sum(i)) + log(1e+06))))
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_Download 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_Download <- function(x, name = NULL, sleep = 2, outdir = getwd()){
-
+MK_Download = function(x, name = NULL, sleep = 2, outdir = getwd()){
+  
   # check name #
-  if(is.null(name)){
-    name = 1:length(x)
-  }
-
+  if(is.null(name)) name = 1:length(x)
+  
   for (i in 1:length(x)) {
-
+    
     # set index #
     write.csv("ok", "Erro.csv", row.names = F)
-
+    
     # check file #
-    if(any(list.files(outdir) %in% name[i])){
-      message(i, " Already here for ", as.character(name)[i], MK_time())
-    }else{
+    if(!any(list.files(outdir) %in% name[i])){
       tryCatch(download.file(as.character(x[i]),
                              destfile = paste0(outdir, "/", as.character(name)[i]),
                              quiet = T, cacheOK = T, method = "libcurl"),
                error = function(e){
                  write.csv("MikuGene download erro", "Erro.csv", row.names = F)
                  message(i," Download Failed for ", as.character(name)[i], MK_time())
-               }
-      )
-
+               })
+      
       # check index #
-      Erro <- as.character(read.csv("Erro.csv", header = T)[1,])
-      if(Erro == "ok"){
-        message(i," Download OK for ", as.character(name)[i], MK_time())
-      }
+      Erro = as.character(read.csv("Erro.csv", header = T)[1,])
+      if(Erro == "ok") message(i," Download OK for ", as.character(name)[i], MK_time())
       while (Erro == "MikuGene download erro"){
         write.csv("ok", "Erro.csv", row.names = F)
         tryCatch(download.file(as.character(x[i]),
@@ -1415,105 +1368,73 @@ MK_Download <- function(x, name = NULL, sleep = 2, outdir = getwd()){
                  error = function(e){
                    write.csv("MikuGene download erro", "Erro.csv", row.names = F)
                    message(i," Download Failed for ", as.character(name)[i], MK_time())
-                 }
-        )
-        Erro <- as.character(read.csv("Erro.csv", header = T)[1,])
-        if(Erro == "ok"){
-          message(i," Download OK for ", as.character(name)[i], MK_time())
-        }
-        Sys.sleep(sleep)}
-    }
+                 })
+        Erro = as.character(read.csv("Erro.csv", header = T)[1,])
+        if(Erro == "ok") message(i," Download OK for ", as.character(name)[i], MK_time())
+        Sys.sleep(sleep)
+      }
+    } else
+      message(i, " Already here for ", as.character(name)[i], MK_time())
+    Sys.sleep(0.5)
   }
-  Sys.sleep(0.5)
 }
 #
 ## 8a03a29901b31176e32928321b1349e6 ##
 
 ## MK_Cor 8a03a29901b31176e32928321b1349e6 ##
 #
-MK_Cor <- function(x, y, method = "all", p_cut = 0.01, adj = T, name = NULL, Save = T){
-  if(is.null(name)){name = "temp"}
+MK_Cor = function (x, y, method = "all", adj_method = "BH", p_cut = 0.01, adj = T, name = NULL, rem0 = T, Save = T) {
+  if (is.null(name)) name = "temp"
   name = as.character(name)
-  # check dim #
-  if(is.null(dim(x))){x = t(data.frame(x))}
-  if(is.null(dim(y))){y = t(data.frame(y))}
-  if(method == "all"){
-    Corlist = matrix(0, nrow(y)*nrow(x),8)
-    e = 0
-    # loop #
-    for(j in 1:nrow(x)){
-      for(i in 1:nrow(y)){
-        e = e + 1
-        Corlist[e,1] = rownames(x)[j]
-        Corlist[e,2] = rownames(y)[i]
-        # Pearson #
-        cor = cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = "pearson", alternative="two.sided")
-        Corlist[e,3] = as.numeric(cor[4])
-        Corlist[e,4] = as.numeric(cor$p.value)
-        rm(cor)
-        # Spearman #
-        cor = cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = "spearman", alternative="two.sided")
-        Corlist[e,6] = as.numeric(cor[4])
-        Corlist[e,7] = as.numeric(cor$p.value)
-        rm(cor)
-      }
-    }
-    Corlist[,5] = p.adjust(Corlist[,4], method="BH")
-    Corlist[,8] = p.adjust(Corlist[,7], method="BH")
-    Corlist = data.frame(Corlist)
-    colnames(Corlist) <- c("Mainname", "Corname", "Cor_p", "P_value_p", "P_adj_p",
-                           "Cor_s", "P_value_s", "P_adj_s")
-    Corlist = Corlist[order(Corlist$P_adj_p),]
-    Corlist$Sig = "No"
-    if(adj){
-      Corlist$Sig[as.numeric(Corlist$P_adj_p) < p_cut] = "Yes"
-    }else{
-      Corlist$Sig[as.numeric(Corlist$P_value_p) < p_cut] = "Yes"
-    }
-    Corlist$State = "None"
-    Corlist$State[as.numeric(Corlist$Cor_p) > 0] = "pos"
-    Corlist$State[as.numeric(Corlist$Cor_p) < 0] = "neg"
-    if(Save){
-      dir.create("backup")
-      write.csv(Corlist, paste0(name, "_cor", MK_time(), ".csv"), row.names = F)
-    }
-    return(Corlist)
-  }else{
-    # Method # 
-      Corlist = matrix(0, nrow(y)*nrow(x),5)
-      e = 0
-      # loop #
-      for(j in 1:nrow(x)){
-        for(i in 1:nrow(y)){
-          e = e + 1
-          Corlist[e,1] = rownames(x)[j]
-          Corlist[e,2] = rownames(y)[i]
-          # method #
-          cor = cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = method, alternative="two.sided")
-          Corlist[e,3] = as.numeric(cor[4])
-          Corlist[e,4] = as.numeric(cor$p.value)
-          rm(cor)
-        }
-      }
-    Corlist[,5] = p.adjust(Corlist[,4], method="BH")
-    Corlist = data.frame(Corlist)
-    colnames(Corlist) = c("Mainname","Corname","Cor","P_value","P_adj")
-    Corlist = Corlist[order(Corlist$P_adj),]
-    Corlist$Sig = "No"
-    if(adj){
-      Corlist$Sig[as.numeric(Corlist$P_adj) < p_cut] = "Yes"
-    }else{
-      Corlist$Sig[as.numeric(Corlist$P_value) < p_cut] = "Yes"
-    }
-    Corlist$State = "None"
-    Corlist$State[as.numeric(Corlist$Cor) > 0] = "pos"
-    Corlist$State[as.numeric(Corlist$Cor) < 0] = "neg"
-    if(Save){
-      dir.create("backup")
-      write.csv(Corlist, paste0(name, "_cor", MK_time(), ".csv"), row.names = F)
-    }
-    return(Corlist)
+  
+  ## If vector
+  if (is.null(dim(x))) x = t(data.frame(x))
+  if (is.null(dim(y))) y = t(data.frame(y))
+  
+  ## Pearson
+  Pearson = data.frame()
+  if (grepl("all", method, ignore.case = T) | grepl("pearson", method, ignore.case = T)) {
+    Pearson = apply(x, 1, function(i){
+      apply(y, 1, function(j){
+        if (rem0) {
+          cor.test(as.numeric(i[which(i != 0 & j != 0)]), as.numeric(j[which(i != 0 & j != 0)]), 
+                   method = "pearson", alternative = "two.sided")
+        } else
+          cor.test(as.numeric(i), as.numeric(j), method = "pearson", alternative = "two.sided")
+      })})
+    Pearson = do.call(rbind, lapply(Pearson, function(i)
+      data.frame(t(sapply(i, function(j)
+        c(Cor_pearson = as.numeric(j$estimate), P_pearson = as.numeric(j$p.value))
+        )))))
+    Pearson$Padj_pearson = p.adjust(Pearson$P_pearson, method = adj_method)
   }
+
+  ## Spearman
+  Spearman = data.frame()
+  if (grepl("all", method, ignore.case = T) | grepl("spearman", method, ignore.case = T)) {
+    Spearman = apply(x, 1, function(i){
+      apply(y, 1, function(j){
+        if (rem0) {
+          cor.test(as.numeric(i[which(i != 0 & j != 0)]), as.numeric(j[which(i != 0 & j != 0)]), 
+                   method = "spearman", alternative = "two.sided")
+        } else
+          cor.test(as.numeric(i), as.numeric(j), method = "spearman", alternative = "two.sided")
+      })})
+    Spearman = do.call(rbind, lapply(Spearman, function(i)
+      data.frame(t(sapply(i, function(j)
+        c(Cor_spearman = as.numeric(j$estimate), P_spearman = as.numeric(j$p.value))
+        )))))
+    Spearman$Padj_spearman = p.adjust(Spearman$P_spearman, method = adj_method)
+  }
+
+  ## Combine re ##
+  Re = MK_cbind_s(Pearson, Spearman)
+  rm(Pearson, Spearman)
+  if (Save){
+    dir.create("backup")
+    write.csv(Re, paste0("backup/", name, "_cor", MK_time(), ".csv"), row.names = F)
+  }                           
+  return(Re)
 }
 #
 ## 8a03a29901b31176e32928321b1349e6
@@ -1532,9 +1453,7 @@ MK_BuildVirusRef <- function(dir = getwd(), version = "2021.1", OutVs = "default
   # Out intViru #
   if(!is.null(OutVs)){
     if(any(OutVs %in% "default")){
-      if(verbose){
-        message("Remove some out-virus ...", MK_time())
-      }
+      if(verbose) message("Remove some out-virus ...", MK_time())
       OutVs = c("NC_041925", "NC_032111", "NC_022518", "NC_018464",
                 "NC_001506", "NC_038858", "NC_043329", "NC_035797",
                 "NC_015253", "NC_043329", "NC_043314", "NC_041831")
@@ -1543,32 +1462,24 @@ MK_BuildVirusRef <- function(dir = getwd(), version = "2021.1", OutVs = "default
   
   # Download from virusite.org #
   if(!any(list.files() %in% "MikuGene_virus.fasta.zip")){
-    if(verbose){
-      message("Downloading genes.fasta ...", MK_time())
-    }
+    if(verbose)  message("Downloading genes.fasta ...", MK_time())
     MK_Download(paste0("http://www.virusite.org/archive/", version, "/genes.fasta.zip"), "MikuGene_virus.fasta.zip")
   }
   if(!any(list.files() %in% "MikuGenome_virus.fasta.zip")){
-    if(verbose){
-      message("Downloading genomes.fasta ...", MK_time())
-    }
+    if(verbose) message("Downloading genomes.fasta ...", MK_time())
     MK_Download(paste0("http://www.virusite.org/archive/", version, "/genomes.fasta.zip"), "MikuGenome_virus.fasta.zip")
   }
   unzip("MikuGene_virus.fasta.zip")
   unzip("MikuGenome_virus.fasta.zip")
   
   if(!any(installed.packages() %in% "Biostrings")){
-    if(!any(installed.packages() %in% "BiocManager")){
-      install.packages("BiocManager")
-    }
+    if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
     BiocManager::install("Biostrings")
   }
   suppressMessages(library(Biostrings))
   
   # Ref from Genome #
-  if(verbose){
-    message("Processing genomes.fasta ...", MK_time())
-  }
+  if(verbose) message("Processing genomes.fasta ...", MK_time())
   Geno = readBStringSet("genomes.fasta")
   Genome = Geno@ranges@NAMES
   # ID  Length  Name #
@@ -1596,9 +1507,7 @@ MK_BuildVirusRef <- function(dir = getwd(), version = "2021.1", OutVs = "default
   rm(Geno) + gc()
   
   # Ref from Gene #
-  if(verbose){
-    message("Processing genes.fasta ...", MK_time())
-  }
+  if(verbose) message("Processing genes.fasta ...", MK_time())
   Gene = readBStringSet("genes.fasta")
   Gtf = Gene@ranges@NAMES
   # ID Location Name #
@@ -1616,10 +1525,7 @@ MK_BuildVirusRef <- function(dir = getwd(), version = "2021.1", OutVs = "default
   # Filt char #
   Gtf_local = gsub("complement\\(", "", gsub("\\)", "", Gtf_local))
   # Remove join and >/< and order #
-  GetID = which(!(
-    grepl("join", Gtf_local) | grepl("<", Gtf_local) |
-      grepl(">", Gtf_local) | grepl("order", Gtf_local)
-  ))
+  GetID = which(!(grepl("join", Gtf_local) | grepl("<", Gtf_local) | grepl(">", Gtf_local) | grepl("order", Gtf_local)))
   # Start and End #
   Gtf_local = Gtf_local[GetID]
   Gtf_start = as.numeric(gsub("\\..*", "", Gtf_local))
@@ -1641,24 +1547,19 @@ MK_BuildVirusRef <- function(dir = getwd(), version = "2021.1", OutVs = "default
   message("MK_virusref build done .", MK_time())
 }
 ##
-MK_VirMap <- function(path_r1, path_r2, refdir = getwd(), name = NULL, maxMiss = 3, GTF = T, Pair = T){
+MK_VirMap = function(path_r1, path_r2, refdir = getwd(), name = NULL, maxMiss = 3, GTF = T, Pair = T){
   options(scipen = 200)
   refdir = as.character(refdir)
   
-  if(is.null(name)){
-    name = "temp"
-  }
+  if(is.null(name)) name = "temp"
   if(!any(installed.packages() %in% "Rsubread")){
-    if(!any(installed.packages() %in% "BiocManager")){
-      install.packages("BiocManager")
-    }
+    if(!any(installed.packages() %in% "BiocManager")) install.packages("BiocManager")
     BiocManager::install("Rsubread")
   }
   suppressMessages(library(Rsubread))
   
   # Ref check #
-  if(!any(grepl("MikuVirusref", list.files(refdir)) & 
-          !grepl("MikuVirusref.log", list.files(refdir)))){
+  if(!any(grepl("MikuVirusref", list.files(refdir)) & !grepl("MikuVirusref.log", list.files(refdir)))){
     
     # build ref-index #
     buildindex(paste0(refdir, "/MikuVirusref"), paste0(refdir, "/MikuGenome_virus.fasta"))
@@ -1687,18 +1588,14 @@ MK_VirMap <- function(path_r1, path_r2, refdir = getwd(), name = NULL, maxMiss =
     Re_Gene$Name = GeneID$Name[as.numeric(gsub("MK", "", rownames(Re_Gene)))]
     Re_Gene$Local = GeneID$Location[as.numeric(gsub("MK", "", rownames(Re_Gene)))]
     Re_Gene = Re_Gene[as.numeric(Re_Gene[,1]) != 0,]
-    if(nrow(Re_Gene) > 0){
-      Re_Gene = Re_Gene[order(Re_Gene[,1], decreasing = T),]
-    }
+    if(nrow(Re_Gene)) Re_Gene = Re_Gene[order(Re_Gene[,1], decreasing = T),]
     write.csv(Re_Gene, paste(name, "Re_Gene.csv"))
     
     # process genome #
     Re_Genome = data.frame(Fea2$counts)
     Re_Genome$Name = GenoID$Name[match(rownames(Re_Genome), GenoID$ID)]
     Re_Genome = Re_Genome[as.numeric(Re_Genome[,1]) != 0,]
-    if(nrow(Re_Genome) > 0){
-      Re_Genome = Re_Genome[order(Re_Genome[,1], decreasing = T),]
-    }
+    if(nrow(Re_Genome)) Re_Genome = Re_Genome[order(Re_Genome[,1], decreasing = T),]
     write.csv(Re_Genome, paste(name, "Re_Genome.csv"))
   }
   rm(list = ls())
@@ -1821,14 +1718,13 @@ if(MKrcpp){
                   }
                   ')
 
-  MK_asMatr <- function(mat){
+  MK_asMatr = function(mat){
 
     ## extract ##
     rowP = mat@i
     colP = findInterval(seq(mat@x)-1, mat@p[-1])
 
-    Mat = MKrc_asmat(rp = rowP, cp = colP, z = mat@x,
-                      nrows =  mat@Dim[1], ncols = mat@Dim[2])
+    Mat = MKrc_asmat(rp = rowP, cp = colP, z = mat@x, nrows =  mat@Dim[1], ncols = mat@Dim[2])
 
     ## return ##
     row.names(Mat) = mat@Dimnames[[1]]
@@ -1837,4 +1733,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-6-19 09:52.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-08-15 10:00.")
