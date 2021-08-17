@@ -1386,11 +1386,9 @@ MK_Download = function(x, name = NULL, sleep = 2, outdir = getwd()){
 MK_Cor = function (x, y, method = "all", adj_method = "BH", p_cut = 0.01, adj = T, name = NULL, rem0 = T, Save = T) {
   if (is.null(name)) name = "temp"
   name = as.character(name)
-  
   ## If vector
   if (is.null(dim(x))) x = t(data.frame(x))
   if (is.null(dim(y))) y = t(data.frame(y))
-  
   ## Pearson
   Pearson = data.frame()
   if (grepl("all", method, ignore.case = T) | grepl("pearson", method, ignore.case = T)) {
@@ -1402,13 +1400,16 @@ MK_Cor = function (x, y, method = "all", adj_method = "BH", p_cut = 0.01, adj = 
         } else
           cor.test(as.numeric(i), as.numeric(j), method = "pearson", alternative = "two.sided")
       })})
-    Pearson = do.call(rbind, lapply(Pearson, function(i)
-      data.frame(t(sapply(i, function(j)
-        c(Cor_pearson = as.numeric(j$estimate), P_pearson = as.numeric(j$p.value))
-        )))))
-    Pearson$Padj_pearson = p.adjust(Pearson$P_pearson, method = adj_method)
+    Pearson = do.call(rbind, lapply(Pearson, function(i){
+      re = data.frame(t(sapply(i, function(j) 
+        c(Cor_pearson = as.numeric(j$estimate), Pvalue_pearson = as.numeric(j$p.value)) )))
+      re$CorName_P = rownames(re)
+      return(re)
+    }))
+    Pearson$MainName_P = rep(rownames(x), each = nrow(y))
+    Pearson$Padj_pearson = p.adjust(Pearson$Pvalue_pearson, method = adj_method)
+    Pearson = Pearson[, c(4,3,1,2,5)]
   }
-
   ## Spearman
   Spearman = data.frame()
   if (grepl("all", method, ignore.case = T) | grepl("spearman", method, ignore.case = T)) {
@@ -1420,13 +1421,16 @@ MK_Cor = function (x, y, method = "all", adj_method = "BH", p_cut = 0.01, adj = 
         } else
           cor.test(as.numeric(i), as.numeric(j), method = "spearman", alternative = "two.sided")
       })})
-    Spearman = do.call(rbind, lapply(Spearman, function(i)
-      data.frame(t(sapply(i, function(j)
-        c(Cor_spearman = as.numeric(j$estimate), P_spearman = as.numeric(j$p.value))
-        )))))
-    Spearman$Padj_spearman = p.adjust(Spearman$P_spearman, method = adj_method)
+    Spearman = do.call(rbind, lapply(Spearman, function(i){
+      re = data.frame(t(sapply(i, function(j) 
+        c(Cor_spearman = as.numeric(j$estimate), Pvalue_spearman = as.numeric(j$p.value)) )))
+      re$CorName_S = rownames(re)
+      return(re)
+    }))
+    Spearman$MainName_S = rep(rownames(x), each = nrow(y))
+    Spearman$Padj_spearman = p.adjust(Spearman$Pvalue_spearman, method = adj_method)
+    Spearman = Spearman[, c(4,3,1,2,5)]
   }
-
   ## Combine re ##
   Re = MK_cbind_s(Pearson, Spearman)
   rm(Pearson, Spearman)
@@ -1733,4 +1737,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-08-15 10:00.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-08-17 15:00.")
