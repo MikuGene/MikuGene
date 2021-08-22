@@ -1187,6 +1187,7 @@ MK_WG_Tom = function(x, name = "temp", nGene = 10000, Save = T){
   if(Save){
     plotDendroAndColors(geneTree, moduleColors[net$blockGenes[[1]]], "Module colors",
                         dendroLabels = FALSE, hang = 0.03, addGuide = TRUE, guideHang = 0.05)
+    message("please check your figure")
     scan()
   }
   
@@ -1737,4 +1738,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-08-17 15:00.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-08-22 10:00.")
