@@ -1164,10 +1164,9 @@ MK_WG_Tom = function(x, name = "temp", nGene = 10000, Save = T){
   if(nGene > 14000) stop("Sorry Memory Size Crush when nGene over 14000.")
   
   ## Filt virable genes ##
-  if(nGene < nrow(x)){
-    x = t(x[order(apply(x, 1, mad), decreasing = T)[1:nGene],])
-  }else
-    x = t(x)
+  if(nGene < nrow(x)) 
+    x = x[order(apply(x, 1, mad), decreasing = T)[1:nGene],]
+  x = t(x)
 
   ## Check genes and samples ##
   gsg = goodSamplesGenes(x)
@@ -1179,6 +1178,7 @@ MK_WG_Tom = function(x, name = "temp", nGene = 10000, Save = T){
   okpower = sft$powerEstimate
   rm(sft)
   if(is.na(okpower)) stop("No okpower !")
+  message("okpower is ", okpower)
 
   ## Make net ##
   net = blockwiseModules(x, power = okpower, numericLabels = T, saveTOMs = T, saveTOMFileBase = paste(name, "WGTOM"), maxBlockSize = 15000)
