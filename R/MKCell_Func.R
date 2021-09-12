@@ -693,13 +693,13 @@ MK_toMM = function(x, HK_bm = F, Mito_rm = T, AC_rm = T, RP_rm = T, RPLS_rm = T,
     gc()
   }
   
-  # Save by dgTMatrix #
+  # Save by dgCMatrix #
   col = colnames(x)
   row = rownames(x)
   if(MKrcpp){
-    x = as(MK_asMatr(x), "dgTMatrix")
+    x = as(MK_asMatr(x), "dgCMatrix")
   }else
-    x = as(as.matrix(x), "dgTMatrix")
+    x = as(as.matrix(x), "dgCMatrix")
   
   write.csv(col, paste0(name, "_cell.csv"))
   write.csv(row, paste0(name, "_gene.csv"))
@@ -1738,4 +1738,4 @@ if(MKrcpp){
   }
 }
 ##
-message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-08-22 10:00.")
+message("  Welcome to MikuGene Bioinformatics Ecological Community !!! --- Lianhao Song (CodeNight) 2021-09-12 10:30.")
