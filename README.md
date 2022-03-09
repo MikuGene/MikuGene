@@ -1,5 +1,6 @@
 <h2>MikuGene: An integrated data analysis software package for bioinformatics.</h2>
 MikuGene Bioinformatics Ecological Community. ---- <i>Lianhao Song</i> (CodeNight)<br>
+(This github account has been deprecated, if need, please follow my current account: github.com/HatsuneCode)
 Newest Version: 1.3<br>
 <br>
 <i>@.@ What I've done:</i><br>
